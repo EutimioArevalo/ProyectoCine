@@ -1,0 +1,88 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* MODIFICACIÓN CUERPO */
+
+body{
+    background: black;
+    color: white;
+    font-size: 20px;
+}
+
+a{
+    color: #fff;
+    text-decoration: none;
+}
+
+ul{
+    list-style: none;
+}
+
+.container{
+    width: 90%;
+    margin: auto;
+}
+
+.nav{
+    font-size: 17px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 60px;
+    padding: 20px 0;
+}
+
+/* MODIFICACIÓN TOP MENU */
+
+.logo{
+    width: 70px;
+}
+
+.nav ul{
+    display: flex;
+}
+
+.nav ul li{
+    padding: 10px;
+}
+
+.nav ul li a{
+    padding: 6px;
+}
+
+.nav ul li a:hover{
+    border-bottom: 2px solid #fff;
+}
+
+.nav ul.nav-menu{
+    flex: 1;
+    margin-left: 20px;
+}
+
+hr{
+    margin: 5px;
+}
+
+/* BIEVENIDA */
+
+.bievenida{
+    width: 100%;
+    height: 200px;
+    background: gray;
+    padding: 50px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.peliculas div.info{
+    width: 100%;
+    height: 200px;
+    background: #fff;
+    
+}
