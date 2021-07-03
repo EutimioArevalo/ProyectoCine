@@ -81,6 +81,8 @@ hr{
     justify-content: center;
 }
 
+
+
 .peliculas div.info{
     width: 100%;
     height: 400px;
@@ -88,12 +90,44 @@ hr{
     margin-top: 10px;
     margin-bottom: 20px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
-    
 }
+
+
 
 
 .peliculas div.info a:hover{
     border-bottom: 2px solid #fff;
 }
+
+.peliculas div.info img{
+    width: 50%;
+    height: auto;
+    margin: 25px;
+
+}
+
+@supports(object-fit: cover){
+    .peliculas div.info img{
+        height: 86%;
+        object-fit: cover;
+        object-position: left;
+    }
+}
+
+
+.peliculas div.info ul{
+    display: flex;
+    flex-direction: column;
+}
+
+.peliculas div.info ul li{
+    padding: 10px;
+}
+
+.peliculas div.info ul li a{
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
