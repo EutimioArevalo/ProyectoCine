@@ -1,0 +1,42 @@
+textarea {
+    resize: none;
+  }
+
+.custom-file-upload{
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    background-color: blue;
+    border-radius: 10px !important;
+}
+
+.col_remaster{
+   text-align: center;
+}
+.item_image{
+    align-items: center;
+    justify-content: center;
+    height: 80%;
+}
+.button_image{
+    align-items: center;
+    justify-content: center;
+}
+
+.button_trailer{
+    width: 200px;
+}
+
+.container_button{
+    justify-content: center;
+    display: flex;
+}
+
+
+.segunda{
+    margin-top: 20;
+}
+
+.centrar{
+    text-align: center;
+}

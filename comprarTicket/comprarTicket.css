@@ -1,0 +1,26 @@
+.contenedor{
+   
+}
+
+.montoTotal{
+    float: right;
+}
+
+.titulo_centrar{
+    text-align: center;
+}
+
+.container_table{
+    display: flex;
+   align-items: center;
+   justify-content: center;
+   margin-top: 35px;
+}
+
+.centrar{
+    text-align: center;
+}
+
+table {
+    width: 50% !important;
+  }
