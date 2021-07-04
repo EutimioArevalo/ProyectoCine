@@ -39,6 +39,18 @@ ul{
 
 /* MODIFICACIÓN TOP MENU */
 
+
+input{
+    width: 100%;
+    padding: 5px 20px;
+    box-sizing: border-box;
+    border-radius: 10px;
+}
+
+input::content{
+    font-size: 10px;
+}
+
 .logo{
     width: 70px;
 }
@@ -255,15 +267,57 @@ p{
     text-align: center;
 }
 
-input{
-    width: 100%;
-    padding: 5px 20px;
-    box-sizing: border-box;
+
+
+.atrib ul.lista li{
+    margin: 20px;
 }
 
-input::content{
-    font-size: 10px;
+.atrib ul.lista{
+   /* background-color:crimson;*/
+    width: 700px;
+    height: 100%;
+    float: left;
+    margin-left: 70px;
+    margin-top: 20px;
 }
+
+.atrib div.perfil{
+    float: right;
+    width: 450px;
+   /* background-color: aqua;*/
+    text-align: center;
+    margin-right: 70px;
+    margin-top: 20px;
+}
+
+.atrib div.perfil img{
+    width: 300x;
+    height: 300px;
+    border:2px solid #fff;
+    margin-bottom: 30px;
+    margin-top: 40px;
+}
+
+.atrib div.boton{
+    margin-top: 500px;
+   /* background-color: #fff;*/
+    text-align: center;
+}
+
+.atrib div.boton button.b1{
+    background-color:#198752;
+}
+
+.atrib div.boton button.b2{
+    background-color:#dd3546;
+}
+
+
+
+
+
+
 
 
 
