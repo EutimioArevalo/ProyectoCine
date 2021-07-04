@@ -32,10 +32,18 @@
 }
 
 .container_button{
-    justify-content: center;
     display: flex;
+    text-align: center;
 }
 
 .titulo{
     text-align: center;
+}
+
+.boton{
+    width: 100;
+}
+
+.botona{
+    margin-top: 100;
 }

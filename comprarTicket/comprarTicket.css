@@ -24,3 +24,14 @@
 table {
     width: 50% !important;
   }
+
+
+  .centrara{
+      margin: 100;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+p{
+    text-align: center;
+}
