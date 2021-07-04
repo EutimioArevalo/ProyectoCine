@@ -1,0 +1,41 @@
+.list-group {
+    height: 80vh;
+    overflow-y: scroll;
+}
+
+
+
+.precio{
+    text-align: right;
+    margin-right: 10%;
+    align-items: center;
+}
+
+.imagenCombo{
+    text-align: center;
+}
+
+.row_item{
+    display: flex; 
+    align-items: center;
+}
+
+.item_container{
+    margin-top: 10px;
+}
+
+
+.button_continuar{
+    margin-top: 10px;
+    height: 50px;
+    width: 200px;
+}
+
+.container_button{
+    justify-content: center;
+    display: flex;
+}
+
+.titulo{
+    text-align: center;
+}
