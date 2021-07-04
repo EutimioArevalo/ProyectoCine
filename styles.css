@@ -3,6 +3,7 @@
     margin: 0;
     padding: 0;
 }
+/* Página Completa*/
 body{
     background: #000;
     color: #fff;
@@ -26,7 +27,7 @@ ul {
     margin: auto;
 }
 
-/* Navigation*/
+/* Barra de Navegación*/
 .nav-main{
     font-size: 17px;
     display: flex;
@@ -65,18 +66,48 @@ hr{
     margin-left: 20px;
 }
 
+ /* Estilo de Carteleras*/
+
 .listaCarteleras {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 25px;
     margin-bottom: 20px;
     align-items: center;
+    
 }
 
 .listaCarteleras img{
     width: 100%;
-    height: 550px;
+    height: 450px;
 }
 .listaCarteleras div a{
-    padding: 20px;
+    margin: 20px;
+}
+.listaCarteleras div{
+    padding: 5px;
+    border: solid #fff;
+    
+}
+.listaCarteleras div a:hover{
+    border-bottom: 2px solid #fff;
+}
+
+
+.boton {
+    font-size: 25px;
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+    align-items: center;
+    justify-content: flex-end;
+}
+.boton a{
+    border: 2px solid #fff;
+    background: #262626;
+    padding: 10px 20px;
+}
+.boton a:hover{
+    cursor: pointer;
+    opacity: 0.7;
 }
