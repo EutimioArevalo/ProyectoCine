@@ -93,7 +93,7 @@ hr{
     border-bottom: 2px solid #fff;
 }
 
-
+/*Estilo Boton Agregar*/
 .boton {
     font-size: 25px;
     display: flex;
@@ -110,4 +110,92 @@ hr{
 .boton a:hover{
     cursor: pointer;
     opacity: 0.7;
+}
+
+/*Pagina Modificar Cartelera*/
+
+.informacionCartelera{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.informacionCartelera div{
+    padding: 10px;
+    margin-top: 40px;
+    /*background-color: #a83827;*/
+    justify-content: space-between;
+    border: solid #fff;
+    border-radius: 20px;
+    align-items: center;
+}
+
+.informacionCartelera div img{
+    width: 50%;
+    height: 450px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    padding-bottom: 10px;
+}
+
+.cambiarImagen{
+    padding: 25%;
+}
+
+.cambiarImagen:hover{
+    border-bottom: 2px solid #fff;
+    
+}
+
+.botonCartelera{
+    border: 2px solid #fff;
+    border-radius: 5px;
+    background: #262626;
+    padding: 10px 20px;
+}
+
+.botonCartelera:hover{
+    opacity: 0.7;
+}
+
+.botonGuardar{
+    font-size: 25px;
+    display: flex;
+    flex-direction: column;
+    background: #262626;
+    border: 2px solid #fff;
+    color: #fff;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.botonGuardar:hover{
+    opacity: 0.7;
+}
+
+.informacionCartelera select{
+    padding: 5px 8px;
+    width: 150px;
+    border: none;
+    box-shadow: none;
+    border-radius: 5px;
+    background-color: #fff;
+    background-image: none;
+    appearance: none;
+}
+
+.informacionCartelera ul{
+    display: flexbox;
+}
+
+.informacionCartelera ul li{
+    padding: 10px;
+    margin: 10px;
+}
+
+.precio{
+    border-radius: 20px;
 }
