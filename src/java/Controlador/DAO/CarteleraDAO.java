@@ -7,22 +7,32 @@ package Controlador.DAO;
 
 import Controlador.JPA.CarteleraJpaController;
 import Modelo.Cartelera;
+import java.util.List;
 
 /**
  *
- * @author Jonathan Javier
+ * @author timoa
  */
 public class CarteleraDAO {
-    private Cartelera cartelera = new Cartelera();
-    private CarteleraJpaController cjc = new CarteleraJpaController();
+    public Cartelera cartelera = new Cartelera();
+    public CarteleraJpaController cjc = new CarteleraJpaController();
     
-    public void crearCartelera(String horario, String duracionCartelera, Float precio){
-        try {
-            cartelera.setIdCartelera(Integer.BYTES);
-            cartelera.setHorario(horario);
-            cartelera.setDuracionCartelera(duracionCartelera);
-            cartelera.setPrecio(precio);
-        } catch (Exception e) {
+    
+    
+    public void listaPeliculas(){
+        cartelera.getPeliculaList();
+    }
+    
+    
+    public Cartelera buscar(int id) {  
+        List<Cartelera> list = cjc.findCarteleraEntities();
+        Cartelera cue = null;
+        for (Cartelera c : list) {
+            if (id == c.getIdCartelera()) {
+                cue = c;
+                break;
+            }
         }
+        return cue;
     }
 }

@@ -7,7 +7,6 @@ package Controlador.DAO;
 
 import Controlador.JPA.FacturaJpaController;
 import Controlador.JPA.PersonaJpaController;
-import Modelo.Cuenta;
 import Modelo.Factura;
 import Modelo.Persona;
 import Modelo.Rol;
@@ -16,11 +15,12 @@ import java.util.List;
 
 /**
  *
- * @author Jonathan Javier
+ * @author timoa
  */
 public class PersonaDAO {
 
     private Persona persona = new Persona();
+    private FacturaJpaController fjc = new FacturaJpaController();
     private PersonaJpaController pjc = new PersonaJpaController();
 
     public void crear(String nombres, String apellidos, String cedula, String email, String telefono, Rol rol) {
@@ -37,8 +37,19 @@ public class PersonaDAO {
             e.getMessage();
         }
     }
+    
+    
 
-    public Persona buscar(String cedula) {
+    public List<Factura> listFactura(int id) {
+        List<Factura> list;
+        if (id == 0) {
+            list = new ArrayList<>();
+            return list;
+        }
+        return null;
+    }
+
+    public Persona buscarCedula(String cedula) {
         List<Persona> list = pjc.findPersonaEntities();
         Persona per = null;
         for (Persona p : list) {
@@ -49,25 +60,18 @@ public class PersonaDAO {
         }
         return per;
     }
-
-    public void editarPersona(int id, String nombres, String apellidos, String cedula, String email, String telefono, Rol rol) {
-        try {
-            persona.setIdPersona(id);
-            persona.setNombres(nombres);
-            persona.setApellidos(apellidos);
-            persona.setCedula(cedula);
-            persona.setEmail(email);
-            persona.setTelefono(telefono);
-            persona.setIdRol(rol);
-            System.out.println("Id Editado: "+persona.getIdPersona());
-            System.out.println("Id Editado: "+persona.getNombres());
-            pjc.edit(persona);
-        } catch (Exception e) {
-            e.getMessage();
+    
+    public Persona buscarPorId(int id) {
+        List<Persona> list = pjc.findPersonaEntities();
+        Persona per = null;
+        for (Persona p : list) {
+            if (id == p.getIdPersona()) {
+                per = p;
+                break;
+            }
         }
+        return per;
     }
     
-    public void darDeBaja(){
-        
-    }
+
 }

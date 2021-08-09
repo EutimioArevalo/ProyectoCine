@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -31,7 +32,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Sala.findByIdSala", query = "SELECT s FROM Sala s WHERE s.idSala = :idSala"),
     @NamedQuery(name = "Sala.findByNroAsientos", query = "SELECT s FROM Sala s WHERE s.nroAsientos = :nroAsientos"),
     @NamedQuery(name = "Sala.findByNroSala", query = "SELECT s FROM Sala s WHERE s.nroSala = :nroSala"),
-    @NamedQuery(name = "Sala.findByEstado", query = "SELECT s FROM Sala s WHERE s.estado = :estado")})
+    @NamedQuery(name = "Sala.findByEstado", query = "SELECT s FROM Sala s WHERE s.estado = :estado"),
+    @NamedQuery(name = "Sala.findByFilas", query = "SELECT s FROM Sala s WHERE s.filas = :filas"),
+    @NamedQuery(name = "Sala.findByColumnas", query = "SELECT s FROM Sala s WHERE s.columnas = :columnas")})
 public class Sala implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -48,9 +51,19 @@ public class Sala implements Serializable {
     private int nroSala;
     @Basic(optional = false)
     @Column(name = "estado")
-    private short estado;
+    private String estado;
+    @Basic(optional = false)
+    @Lob
+    @Column(name = "asientos")
+    private String asientos;
+    @Basic(optional = false)
+    @Column(name = "filas")
+    private int filas;
+    @Basic(optional = false)
+    @Column(name = "columnas")
+    private int columnas;
     @JoinColumn(name = "id_cartelera", referencedColumnName = "id_cartelera")
-    @ManyToOne(optional = false)
+    @ManyToOne
     private Cartelera idCartelera;
 
     public Sala() {
@@ -60,11 +73,14 @@ public class Sala implements Serializable {
         this.idSala = idSala;
     }
 
-    public Sala(Integer idSala, int nroAsientos, int nroSala, short estado) {
+    public Sala(Integer idSala, int nroAsientos, int nroSala, String estado, String asientos, int filas, int columnas) {
         this.idSala = idSala;
         this.nroAsientos = nroAsientos;
         this.nroSala = nroSala;
         this.estado = estado;
+        this.asientos = asientos;
+        this.filas = filas;
+        this.columnas = columnas;
     }
 
     public Integer getIdSala() {
@@ -91,12 +107,36 @@ public class Sala implements Serializable {
         this.nroSala = nroSala;
     }
 
-    public short getEstado() {
+    public String getEstado() {
         return estado;
     }
 
-    public void setEstado(short estado) {
+    public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public String getAsientos() {
+        return asientos;
+    }
+
+    public void setAsientos(String asientos) {
+        this.asientos = asientos;
+    }
+
+    public int getFilas() {
+        return filas;
+    }
+
+    public void setFilas(int filas) {
+        this.filas = filas;
+    }
+
+    public int getColumnas() {
+        return columnas;
+    }
+
+    public void setColumnas(int columnas) {
+        this.columnas = columnas;
     }
 
     public Cartelera getIdCartelera() {

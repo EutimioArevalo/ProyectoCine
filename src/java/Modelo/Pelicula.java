@@ -90,7 +90,7 @@ public class Pelicula implements Serializable {
     @Column(name = "fomato")
     private String fomato;
     @JoinColumn(name = "id_cartelera", referencedColumnName = "id_cartelera")
-    @ManyToOne(optional = false)
+    @ManyToOne
     private Cartelera idCartelera;
 
     public Pelicula() {

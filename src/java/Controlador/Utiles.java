@@ -14,6 +14,7 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import org.json.JSONArray;
 
 /**
  *
@@ -74,7 +75,7 @@ public class Utiles {
 
     }
 
-public int obtenerDuracion(String duracion, String HHMM) {
+    public int obtenerDuracion(String duracion, String HHMM) {
         if (HHMM.equals("HH")) {
             String aux = "";
             for (int i = 0; i < duracion.length(); i++) {
@@ -99,6 +100,21 @@ public int obtenerDuracion(String duracion, String HHMM) {
             }
             return Integer.valueOf(aux);
         }
+    }
+
+    public String toJson(int nroAsientos) {
+        Boolean[] arry = new Boolean[nroAsientos];
+        for (int i = 0; i < nroAsientos; i++) {
+            arry[i] = false;
+        }
+        
+        JSONArray jsarray = new JSONArray();
+        
+        for (int i = 0; i < arry.length; i++) {
+            jsarray.put(arry[i]);
+        }
+        
+        return jsarray.toString();
     }
 
 }

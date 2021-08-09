@@ -55,11 +55,11 @@ public class Cartelera implements Serializable {
     @Basic(optional = false)
     @Column(name = "precio")
     private float precio;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idCartelera")
+    @OneToMany(mappedBy = "idCartelera")
     private List<Pelicula> peliculaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idcartelera")
     private List<Ticket> ticketList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idCartelera")
+    @OneToMany(mappedBy = "idCartelera")
     private List<Sala> salaList;
 
     public Cartelera() {
