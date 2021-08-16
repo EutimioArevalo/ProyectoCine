@@ -4,33 +4,91 @@
     Author     : timoa
 --%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="Controlador.DAO.SnackDAO"%>
+<%@page import="Modelo.Snack"%>
+<%@page import="java.util.List"%>
+<%@page import="Controlador.JPA.SnackJpaController"%>
+<%@page contentType="text/html; charset=ISO-8859-1" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8">
+        <meta charset="ISO-8859-1">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Vista_cine</title>
+        <link rel="shortcut icon" href="https://res.cloudinary.com/djsa7v6bs/image/upload/v1629058563/boleto_p5b5s5.png">
         <link rel="stylesheet" href="styles.css">
-    </head>
-    <body>
         <!--FONT OSWALD-->
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400&display=swap" rel="stylesheet">
         <!--CUSTOME CSS-->
         <link rel="stylesheet" href="adminsnacks.css">  
+        <link rel="stylesheet" href="../inicio/inicio.css">  
+    </head>
+
+    <%
+
+        HttpSession sesion = request.getSession();
+        SnackJpaController sjc = new SnackJpaController();
+        SnackDAO sdao = new SnackDAO();
+        List<Snack> aux = sjc.findSnackEntities();
+
+        int cont = 0;
+
+        String idSnack = "";
+        if (sesion.getAttribute("idSnack") != null) {
+            idSnack = sesion.getAttribute("idSnack").toString();
+        } else {
+            idSnack = null;
+        }
+
+        if (request.getParameter("btnAgregar") != null) {
+            String nombre = request.getParameter("txtNombre").toString();
+            String descripcion = request.getParameter("txtDescripcion").toString();
+            Float precio = Float.valueOf(request.getParameter("txtPrecio").toString());
+            String img = request.getParameter("txtHidden").toString();
+            try {
+                sdao.agregar(nombre, descripcion, precio, img);
+            } catch (Exception e) {
+                out.print("<script>alert('Error al momento de agregar Snack, revise los datos');</script>");
+            }
+            response.sendRedirect("../adminsnacks/adminsnacks.jsp");
+        }
+
+        if (request.getParameter("btnEditar") != null) {
+            String nombre = request.getParameter("txtNombre").toString();
+            String descripcion = request.getParameter("txtDescripcion").toString();
+            Float precio = Float.valueOf(request.getParameter("txtPrecio").toString());
+            String img = request.getParameter("txtHidden").toString();
+            sdao.editar(Integer.valueOf(idSnack), nombre, descripcion, precio, img);
+            sesion.setAttribute("idSnack", null);
+            response.sendRedirect("../adminsnacks/adminsnacks.jsp");
+            out.print("<script>alert('Editado con exito');</script>");
+        }
+
+        for (int i = 0; i < aux.size(); i++) {
+            if (request.getParameter("btnSeleccion" + i) != null) {
+                sesion.setAttribute("idSnack", aux.get(i).getIdSnack());
+                response.sendRedirect("../adminsnacks/adminsnacks.jsp");
+            }
+        }
+
+    %>
+
+
+    <body>
+
 
 
         <div class="container">
             <nav class="nav-main">
-                <img src="../Imagenes/logo.png" alt="Cine LOGO" class="logo">
+                <img src="https://res.cloudinary.com/djsa7v6bs/image/upload/v1629058563/boleto_p5b5s5.png" alt="Cine LOGO" class="logo">
                 <ul class="nav-menu">
                     <li>
-                        <a href="#">Inicio</a>
+                        <a href="../inicio/inicio.jsp">Inicio</a>
                     </li>
                     <li>
-                        <a href="ModificarCartelera.jsp">Modificar Carteleras</a>
+                        <a href="../ListaCarteleras/ListaCarteleras.jsp">Modificar Carteleras</a>
                     </li>
                     <li>
                         <a href="../adminPeliculas/adminPeliculas.jsp">Administrar Peliculas</a>
@@ -42,10 +100,10 @@
                         <a href="../adminsalas/adminsala.jsp">Gestionar Sala</a>
                     </li>
                     <li>
-                        <a href="../comprarTicket/comprarTicket.jsp">Vender Ticket</a>
+                        <a href="../comprarTicket/seleccionarAsiento.jsp">Vender Ticket</a>
                     </li>
                     <li>
-                        <a href="#">Modificar Informaci贸n</a>
+                        <a href="../registrarse/Pag_Registrarse.jsp">Modificar Informaci髇</a>
                     </li>
                     <li>
                         <a href="../adminsnacks/adminsnacks.jsp">Administrar Snacks</a>
@@ -55,74 +113,97 @@
             <hr>
 
             <section class="form_info">
+                <br>
                 <h5>Formulario combos: </h5>
-                <p>Ingrese la informaci贸n del combo : </p>
+                <p>Ingrese la informaci髇 del combo : </p>
                 <div class="datatable_container">
                     <table class="datatable">
                         <thead>
                             <tr>
                                 <!--se definen el numero de columnas-->
-                                <th></th>
-                                <th> <strong>Numero</strong> </th>
-                                <th>Descripci贸n</th>
+
+                                <th> <strong>Nombre</strong> </th>
+                                <th>Descripci髇</th>
                                 <th>Precio</th>
+                                <th>Selecci髇:</th>
                             </tr>
                         <tbody>
                             <!--se definen el numero de filas-->
-                            <tr>
-                                <td> <input type="checkbox" name="" id="" ></td>
+                            <%                                    for (Snack snack : aux) {
 
-                                <td>1</td>
-                                <td>Hot dogs, palomitas, chocolate Galak</td>
-                                <td>1.25</td>
-                            </tr>
+                            %>
                             <tr>
-                                <td> <input type="checkbox" name="" id="" ></td>
 
-                                <td>2</td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td> <input type="checkbox" name="" id="" ></td>
+                                <td><%=snack.getNombre()%></td>
+                                <td><%=snack.getDescripcion()%></td>
+                                <td><%=snack.getPrecio()%></td>
+                                <td> 
+                                    <form action="adminsnacks.jsp" method="POST">
+                                        <input type="submit" name="btnSeleccion<%=cont%>" value="Seleccionar">
+                                    </form>
+                                </td>
 
-                                <td>3</td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td> <input type="checkbox" name="" id="" ></td>
 
-                                <td>4</td>
-                                <td></td>
-                                <td></td>
                             </tr>
 
-
-
-
+                            <%cont++;
+                                }%>
 
                         </tbody>
                         </thead>
                     </table>
 
                 </div>
-                <p2>Informaci贸n:</p2>
-                <input class= "controls" type="text" name="nombres" id="nombres" placeholder="Ingrese informaci贸n">
-                <p2>Precio:</p2>
-                <input class= "controls" type="number" name="nombres" id="nombres" placeholder="Ingrese su precio">
-                <input class= "buttons" type="submit" value="Agregar">
-                <input class= "buttons" type="submit" value="Modificar">
-                <input class= "buttons" type="submit" value="Dar de baja">
-                <h5></h5>
-                <input class= "button" type="submit" value="Aceptar">
+
+
+                <form action="adminsnacks.jsp" method="POST">
+                    <%
+
+                        if (idSnack == null) {
+
+                    %>
+                    <p2>Nombre:</p2>
+                    <input class= "controls" type="text" name="txtNombre" id="nombres" placeholder="Ingrese un nombre para el combo">
+                    <p2>Descripci髇:</p2>
+                    <input class= "controls" type="text" name="txtDescripcion" id="nombres" placeholder="Ingrese una descripcion del combo">
+                    <p2>Precio:</p2>
+                    <input class= "controls" type="number" name="txtPrecio" id="nombres" placeholder="Ingrese su precio" step="any">
+                    <p2>Imagen del combo:</p2>
+                    <img id="img-combo" height="275" width="425"/>
+                    <input type="hidden" name="txtHidden" id="hidden">
+                    <input type="file" id="subirImg" value="Subir imagen">
+                    <br><!-- comment -->
+                    <hr><!-- comment -->
+                    <br>
+                    <input class= "buttons" name="btnAgregar" type="submit" value="Agregar">
+                    <%} else {%>
+                    <p2>Nombre:</p2>
+                    <input class= "controls" type="text" name="txtNombre" id="nombres" placeholder="Ingrese un nombre para el combo" value="<%=sdao.buscarsnack(Integer.valueOf(idSnack)).getNombre()%>">
+                    <p2>Descripci髇:</p2>
+                    <input class= "controls" type="text" name="txtDescripcion" id="nombres" placeholder="Ingrese una descripcion del combo" value="<%=sdao.buscarsnack(Integer.valueOf(idSnack)).getDescripcion()%>">
+                    <p2>Precio:</p2>
+                    <input class= "controls" type="number" name="txtPrecio" id="nombres" placeholder="Ingrese su precio" step="any" value="<%=sdao.buscarsnack(Integer.valueOf(idSnack)).getPrecio()%>">
+                    <p2>Imagen del combo:</p2>
+                    <img src="<%=sdao.buscarsnack(Integer.valueOf(idSnack)).getImg()%>"  id="img-combo" height="275" width="425"/>
+                    <input type="hidden" name="txtHidden" id="hidden">
+                    <input type="file" id="subirImg" value="Subir imagen">
+                    <br><!-- comment -->
+                    <hr><!-- comment -->
+                    <br>
+
+                    <input class= "buttons" name="btnEditar" type="submit" value="Modificar">
+                    <input class= "buttons" name="btnDarBaja" type="submit" value="Dar de baja">
+                    <hr>
+                    <%}%>
+                </form>
+
+
             </section>
-            <nav class="nav-main">
-
-
-            </nav>
+            <hr>
+            <br>
         </div>
 
-
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script src="snack.js"></script>
     </body>
 </html>

@@ -5,6 +5,7 @@
  */
 package Controlador.JPA;
 
+import Controlador.JPA.exceptions.IllegalOrphanException;
 import Controlador.JPA.exceptions.NonexistentEntityException;
 import java.io.Serializable;
 import javax.persistence.Query;
@@ -13,6 +14,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import Modelo.Cartelera;
 import Modelo.Pelicula;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -32,25 +34,33 @@ public class PeliculaJpaController implements Serializable {
     }
     
     private EntityManagerFactory emf = Persistence.createEntityManagerFactory("ProyectoCineWEBPU");
-
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
     public void create(Pelicula pelicula) {
+        if (pelicula.getCarteleraList() == null) {
+            pelicula.setCarteleraList(new ArrayList<Cartelera>());
+        }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Cartelera idCartelera = pelicula.getIdCartelera();
-            if (idCartelera != null) {
-                idCartelera = em.getReference(idCartelera.getClass(), idCartelera.getIdCartelera());
-                pelicula.setIdCartelera(idCartelera);
+            List<Cartelera> attachedCarteleraList = new ArrayList<Cartelera>();
+            for (Cartelera carteleraListCarteleraToAttach : pelicula.getCarteleraList()) {
+                carteleraListCarteleraToAttach = em.getReference(carteleraListCarteleraToAttach.getClass(), carteleraListCarteleraToAttach.getIdCartelera());
+                attachedCarteleraList.add(carteleraListCarteleraToAttach);
             }
+            pelicula.setCarteleraList(attachedCarteleraList);
             em.persist(pelicula);
-            if (idCartelera != null) {
-                idCartelera.getPeliculaList().add(pelicula);
-                idCartelera = em.merge(idCartelera);
+            for (Cartelera carteleraListCartelera : pelicula.getCarteleraList()) {
+                Pelicula oldIdPeliculaOfCarteleraListCartelera = carteleraListCartelera.getIdPelicula();
+                carteleraListCartelera.setIdPelicula(pelicula);
+                carteleraListCartelera = em.merge(carteleraListCartelera);
+                if (oldIdPeliculaOfCarteleraListCartelera != null) {
+                    oldIdPeliculaOfCarteleraListCartelera.getCarteleraList().remove(carteleraListCartelera);
+                    oldIdPeliculaOfCarteleraListCartelera = em.merge(oldIdPeliculaOfCarteleraListCartelera);
+                }
             }
             em.getTransaction().commit();
         } finally {
@@ -60,26 +70,44 @@ public class PeliculaJpaController implements Serializable {
         }
     }
 
-    public void edit(Pelicula pelicula) throws NonexistentEntityException, Exception {
+    public void edit(Pelicula pelicula) throws IllegalOrphanException, NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
             Pelicula persistentPelicula = em.find(Pelicula.class, pelicula.getIdPelicula());
-            Cartelera idCarteleraOld = persistentPelicula.getIdCartelera();
-            Cartelera idCarteleraNew = pelicula.getIdCartelera();
-            if (idCarteleraNew != null) {
-                idCarteleraNew = em.getReference(idCarteleraNew.getClass(), idCarteleraNew.getIdCartelera());
-                pelicula.setIdCartelera(idCarteleraNew);
+            List<Cartelera> carteleraListOld = persistentPelicula.getCarteleraList();
+            List<Cartelera> carteleraListNew = pelicula.getCarteleraList();
+            List<String> illegalOrphanMessages = null;
+            for (Cartelera carteleraListOldCartelera : carteleraListOld) {
+                if (!carteleraListNew.contains(carteleraListOldCartelera)) {
+                    if (illegalOrphanMessages == null) {
+                        illegalOrphanMessages = new ArrayList<String>();
+                    }
+                    illegalOrphanMessages.add("You must retain Cartelera " + carteleraListOldCartelera + " since its idPelicula field is not nullable.");
+                }
             }
+            if (illegalOrphanMessages != null) {
+                throw new IllegalOrphanException(illegalOrphanMessages);
+            }
+            List<Cartelera> attachedCarteleraListNew = new ArrayList<Cartelera>();
+            for (Cartelera carteleraListNewCarteleraToAttach : carteleraListNew) {
+                carteleraListNewCarteleraToAttach = em.getReference(carteleraListNewCarteleraToAttach.getClass(), carteleraListNewCarteleraToAttach.getIdCartelera());
+                attachedCarteleraListNew.add(carteleraListNewCarteleraToAttach);
+            }
+            carteleraListNew = attachedCarteleraListNew;
+            pelicula.setCarteleraList(carteleraListNew);
             pelicula = em.merge(pelicula);
-            if (idCarteleraOld != null && !idCarteleraOld.equals(idCarteleraNew)) {
-                idCarteleraOld.getPeliculaList().remove(pelicula);
-                idCarteleraOld = em.merge(idCarteleraOld);
-            }
-            if (idCarteleraNew != null && !idCarteleraNew.equals(idCarteleraOld)) {
-                idCarteleraNew.getPeliculaList().add(pelicula);
-                idCarteleraNew = em.merge(idCarteleraNew);
+            for (Cartelera carteleraListNewCartelera : carteleraListNew) {
+                if (!carteleraListOld.contains(carteleraListNewCartelera)) {
+                    Pelicula oldIdPeliculaOfCarteleraListNewCartelera = carteleraListNewCartelera.getIdPelicula();
+                    carteleraListNewCartelera.setIdPelicula(pelicula);
+                    carteleraListNewCartelera = em.merge(carteleraListNewCartelera);
+                    if (oldIdPeliculaOfCarteleraListNewCartelera != null && !oldIdPeliculaOfCarteleraListNewCartelera.equals(pelicula)) {
+                        oldIdPeliculaOfCarteleraListNewCartelera.getCarteleraList().remove(carteleraListNewCartelera);
+                        oldIdPeliculaOfCarteleraListNewCartelera = em.merge(oldIdPeliculaOfCarteleraListNewCartelera);
+                    }
+                }
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
@@ -98,7 +126,7 @@ public class PeliculaJpaController implements Serializable {
         }
     }
 
-    public void destroy(Integer id) throws NonexistentEntityException {
+    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -110,10 +138,16 @@ public class PeliculaJpaController implements Serializable {
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The pelicula with id " + id + " no longer exists.", enfe);
             }
-            Cartelera idCartelera = pelicula.getIdCartelera();
-            if (idCartelera != null) {
-                idCartelera.getPeliculaList().remove(pelicula);
-                idCartelera = em.merge(idCartelera);
+            List<String> illegalOrphanMessages = null;
+            List<Cartelera> carteleraListOrphanCheck = pelicula.getCarteleraList();
+            for (Cartelera carteleraListOrphanCheckCartelera : carteleraListOrphanCheck) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("This Pelicula (" + pelicula + ") cannot be destroyed since the Cartelera " + carteleraListOrphanCheckCartelera + " in its carteleraList field has a non-nullable idPelicula field.");
+            }
+            if (illegalOrphanMessages != null) {
+                throw new IllegalOrphanException(illegalOrphanMessages);
             }
             em.remove(pelicula);
             em.getTransaction().commit();

@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,7 +19,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "cuenta")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Cuenta.findAll", query = "SELECT c FROM Cuenta c"),
     @NamedQuery(name = "Cuenta.findByIdCuenta", query = "SELECT c FROM Cuenta c WHERE c.idCuenta = :idCuenta"),
@@ -39,23 +38,23 @@ public class Cuenta implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_cuenta")
+    @Column(name = "idCuenta", nullable = false)
     private Integer idCuenta;
     @Basic(optional = false)
-    @Column(name = "usuario")
+    @Column(name = "usuario", nullable = false, length = 50)
     private String usuario;
     @Basic(optional = false)
-    @Column(name = "clave")
+    @Column(name = "clave", nullable = false, length = 100)
     private String clave;
     @Basic(optional = false)
-    @Column(name = "estado")
+    @Column(name = "estado", nullable = false, length = 10)
     private String estado;
     @JoinColumns({
-        @JoinColumn(name = "id_Persona", referencedColumnName = "id_Persona"),
-        @JoinColumn(name = "id_Persona", referencedColumnName = "id_Persona"),
-        @JoinColumn(name = "id_Persona", referencedColumnName = "id_Persona"),
-        @JoinColumn(name = "id_Persona", referencedColumnName = "id_Persona")})
-    @ManyToOne(optional = false)
+        @JoinColumn(name = "idPersona", referencedColumnName = "idPersona", nullable = false),
+        @JoinColumn(name = "idPersona", referencedColumnName = "idPersona", nullable = false),
+        @JoinColumn(name = "idPersona", referencedColumnName = "idPersona", nullable = false),
+        @JoinColumn(name = "idPersona", referencedColumnName = "idPersona", nullable = false)})
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Persona persona;
 
     public Cuenta() {

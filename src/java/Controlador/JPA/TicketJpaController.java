@@ -27,12 +27,12 @@ public class TicketJpaController implements Serializable {
 
     public TicketJpaController(EntityManagerFactory emf) {
         this.emf = emf;
-    }
-    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("ProyectoCineWEBPU");
+    } 
 
     public TicketJpaController() {
     }
     
+    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("ProyectoCineWEBPU");
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
@@ -43,24 +43,24 @@ public class TicketJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Cartelera idcartelera = ticket.getIdcartelera();
-            if (idcartelera != null) {
-                idcartelera = em.getReference(idcartelera.getClass(), idcartelera.getIdCartelera());
-                ticket.setIdcartelera(idcartelera);
+            Cartelera idCartelera = ticket.getIdCartelera();
+            if (idCartelera != null) {
+                idCartelera = em.getReference(idCartelera.getClass(), idCartelera.getIdCartelera());
+                ticket.setIdCartelera(idCartelera);
             }
-            Detallefactura idDetalleFactura = ticket.getIdDetalleFactura();
-            if (idDetalleFactura != null) {
-                idDetalleFactura = em.getReference(idDetalleFactura.getClass(), idDetalleFactura.getIdDetalleFactura());
-                ticket.setIdDetalleFactura(idDetalleFactura);
+            Detallefactura idDetalle = ticket.getIdDetalle();
+            if (idDetalle != null) {
+                idDetalle = em.getReference(idDetalle.getClass(), idDetalle.getIdDetalle());
+                ticket.setIdDetalle(idDetalle);
             }
             em.persist(ticket);
-            if (idcartelera != null) {
-                idcartelera.getTicketList().add(ticket);
-                idcartelera = em.merge(idcartelera);
+            if (idCartelera != null) {
+                idCartelera.getTicketList().add(ticket);
+                idCartelera = em.merge(idCartelera);
             }
-            if (idDetalleFactura != null) {
-                idDetalleFactura.getTicketList().add(ticket);
-                idDetalleFactura = em.merge(idDetalleFactura);
+            if (idDetalle != null) {
+                idDetalle.getTicketList().add(ticket);
+                idDetalle = em.merge(idDetalle);
             }
             em.getTransaction().commit();
         } finally {
@@ -76,34 +76,34 @@ public class TicketJpaController implements Serializable {
             em = getEntityManager();
             em.getTransaction().begin();
             Ticket persistentTicket = em.find(Ticket.class, ticket.getIdTicket());
-            Cartelera idcarteleraOld = persistentTicket.getIdcartelera();
-            Cartelera idcarteleraNew = ticket.getIdcartelera();
-            Detallefactura idDetalleFacturaOld = persistentTicket.getIdDetalleFactura();
-            Detallefactura idDetalleFacturaNew = ticket.getIdDetalleFactura();
-            if (idcarteleraNew != null) {
-                idcarteleraNew = em.getReference(idcarteleraNew.getClass(), idcarteleraNew.getIdCartelera());
-                ticket.setIdcartelera(idcarteleraNew);
+            Cartelera idCarteleraOld = persistentTicket.getIdCartelera();
+            Cartelera idCarteleraNew = ticket.getIdCartelera();
+            Detallefactura idDetalleOld = persistentTicket.getIdDetalle();
+            Detallefactura idDetalleNew = ticket.getIdDetalle();
+            if (idCarteleraNew != null) {
+                idCarteleraNew = em.getReference(idCarteleraNew.getClass(), idCarteleraNew.getIdCartelera());
+                ticket.setIdCartelera(idCarteleraNew);
             }
-            if (idDetalleFacturaNew != null) {
-                idDetalleFacturaNew = em.getReference(idDetalleFacturaNew.getClass(), idDetalleFacturaNew.getIdDetalleFactura());
-                ticket.setIdDetalleFactura(idDetalleFacturaNew);
+            if (idDetalleNew != null) {
+                idDetalleNew = em.getReference(idDetalleNew.getClass(), idDetalleNew.getIdDetalle());
+                ticket.setIdDetalle(idDetalleNew);
             }
             ticket = em.merge(ticket);
-            if (idcarteleraOld != null && !idcarteleraOld.equals(idcarteleraNew)) {
-                idcarteleraOld.getTicketList().remove(ticket);
-                idcarteleraOld = em.merge(idcarteleraOld);
+            if (idCarteleraOld != null && !idCarteleraOld.equals(idCarteleraNew)) {
+                idCarteleraOld.getTicketList().remove(ticket);
+                idCarteleraOld = em.merge(idCarteleraOld);
             }
-            if (idcarteleraNew != null && !idcarteleraNew.equals(idcarteleraOld)) {
-                idcarteleraNew.getTicketList().add(ticket);
-                idcarteleraNew = em.merge(idcarteleraNew);
+            if (idCarteleraNew != null && !idCarteleraNew.equals(idCarteleraOld)) {
+                idCarteleraNew.getTicketList().add(ticket);
+                idCarteleraNew = em.merge(idCarteleraNew);
             }
-            if (idDetalleFacturaOld != null && !idDetalleFacturaOld.equals(idDetalleFacturaNew)) {
-                idDetalleFacturaOld.getTicketList().remove(ticket);
-                idDetalleFacturaOld = em.merge(idDetalleFacturaOld);
+            if (idDetalleOld != null && !idDetalleOld.equals(idDetalleNew)) {
+                idDetalleOld.getTicketList().remove(ticket);
+                idDetalleOld = em.merge(idDetalleOld);
             }
-            if (idDetalleFacturaNew != null && !idDetalleFacturaNew.equals(idDetalleFacturaOld)) {
-                idDetalleFacturaNew.getTicketList().add(ticket);
-                idDetalleFacturaNew = em.merge(idDetalleFacturaNew);
+            if (idDetalleNew != null && !idDetalleNew.equals(idDetalleOld)) {
+                idDetalleNew.getTicketList().add(ticket);
+                idDetalleNew = em.merge(idDetalleNew);
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
@@ -134,15 +134,15 @@ public class TicketJpaController implements Serializable {
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The ticket with id " + id + " no longer exists.", enfe);
             }
-            Cartelera idcartelera = ticket.getIdcartelera();
-            if (idcartelera != null) {
-                idcartelera.getTicketList().remove(ticket);
-                idcartelera = em.merge(idcartelera);
+            Cartelera idCartelera = ticket.getIdCartelera();
+            if (idCartelera != null) {
+                idCartelera.getTicketList().remove(ticket);
+                idCartelera = em.merge(idCartelera);
             }
-            Detallefactura idDetalleFactura = ticket.getIdDetalleFactura();
-            if (idDetalleFactura != null) {
-                idDetalleFactura.getTicketList().remove(ticket);
-                idDetalleFactura = em.merge(idDetalleFactura);
+            Detallefactura idDetalle = ticket.getIdDetalle();
+            if (idDetalle != null) {
+                idDetalle.getTicketList().remove(ticket);
+                idDetalle = em.merge(idDetalle);
             }
             em.remove(ticket);
             em.getTransaction().commit();

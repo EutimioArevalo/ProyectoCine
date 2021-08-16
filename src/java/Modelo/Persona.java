@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,16 +21,17 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.persistence.UniqueConstraint;
 
 /**
  *
  * @author timoa
  */
 @Entity
-@Table(name = "persona")
-@XmlRootElement
+@Table(name = "persona", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"cedula"}),
+    @UniqueConstraint(columnNames = {"email"}),
+    @UniqueConstraint(columnNames = {"telefono"})})
 @NamedQueries({
     @NamedQuery(name = "Persona.findAll", query = "SELECT p FROM Persona p"),
     @NamedQuery(name = "Persona.findByIdPersona", query = "SELECT p FROM Persona p WHERE p.idPersona = :idPersona"),
@@ -44,29 +46,29 @@ public class Persona implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_Persona")
+    @Column(name = "idPersona", nullable = false)
     private Integer idPersona;
     @Basic(optional = false)
-    @Column(name = "nombres")
+    @Column(name = "nombres", nullable = false, length = 100)
     private String nombres;
     @Basic(optional = false)
-    @Column(name = "apellidos")
+    @Column(name = "apellidos", nullable = false, length = 100)
     private String apellidos;
     @Basic(optional = false)
-    @Column(name = "cedula")
+    @Column(name = "cedula", nullable = false, length = 10)
     private String cedula;
     @Basic(optional = false)
-    @Column(name = "telefono")
+    @Column(name = "telefono", nullable = false, length = 10)
     private String telefono;
     @Basic(optional = false)
-    @Column(name = "email")
+    @Column(name = "email", nullable = false, length = 100)
     private String email;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "persona")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "persona", fetch = FetchType.LAZY)
     private List<Factura> facturaList;
-    @JoinColumn(name = "id_Rol", referencedColumnName = "id_Rol")
-    @ManyToOne(optional = false)
+    @JoinColumn(name = "idRol", referencedColumnName = "idRol", nullable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Rol idRol;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "persona")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "persona", fetch = FetchType.LAZY)
     private List<Cuenta> cuentaList;
 
     public Persona() {
@@ -133,7 +135,6 @@ public class Persona implements Serializable {
         this.email = email;
     }
 
-    @XmlTransient
     public List<Factura> getFacturaList() {
         return facturaList;
     }
@@ -150,7 +151,6 @@ public class Persona implements Serializable {
         this.idRol = idRol;
     }
 
-    @XmlTransient
     public List<Cuenta> getCuentaList() {
         return cuentaList;
     }

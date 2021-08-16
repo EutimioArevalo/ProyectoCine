@@ -5,6 +5,7 @@
  */
 package Controlador.JPA;
 
+import Controlador.JPA.exceptions.IllegalOrphanException;
 import Controlador.JPA.exceptions.NonexistentEntityException;
 import java.io.Serializable;
 import javax.persistence.Query;
@@ -13,6 +14,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import Modelo.Cartelera;
 import Modelo.Sala;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -38,19 +40,28 @@ public class SalaJpaController implements Serializable {
     }
 
     public void create(Sala sala) {
+        if (sala.getCarteleraList() == null) {
+            sala.setCarteleraList(new ArrayList<Cartelera>());
+        }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Cartelera idCartelera = sala.getIdCartelera();
-            if (idCartelera != null) {
-                idCartelera = em.getReference(idCartelera.getClass(), idCartelera.getIdCartelera());
-                sala.setIdCartelera(idCartelera);
+            List<Cartelera> attachedCarteleraList = new ArrayList<Cartelera>();
+            for (Cartelera carteleraListCarteleraToAttach : sala.getCarteleraList()) {
+                carteleraListCarteleraToAttach = em.getReference(carteleraListCarteleraToAttach.getClass(), carteleraListCarteleraToAttach.getIdCartelera());
+                attachedCarteleraList.add(carteleraListCarteleraToAttach);
             }
+            sala.setCarteleraList(attachedCarteleraList);
             em.persist(sala);
-            if (idCartelera != null) {
-                idCartelera.getSalaList().add(sala);
-                idCartelera = em.merge(idCartelera);
+            for (Cartelera carteleraListCartelera : sala.getCarteleraList()) {
+                Sala oldIdSalaOfCarteleraListCartelera = carteleraListCartelera.getIdSala();
+                carteleraListCartelera.setIdSala(sala);
+                carteleraListCartelera = em.merge(carteleraListCartelera);
+                if (oldIdSalaOfCarteleraListCartelera != null) {
+                    oldIdSalaOfCarteleraListCartelera.getCarteleraList().remove(carteleraListCartelera);
+                    oldIdSalaOfCarteleraListCartelera = em.merge(oldIdSalaOfCarteleraListCartelera);
+                }
             }
             em.getTransaction().commit();
         } finally {
@@ -60,26 +71,44 @@ public class SalaJpaController implements Serializable {
         }
     }
 
-    public void edit(Sala sala) throws NonexistentEntityException, Exception {
+    public void edit(Sala sala) throws IllegalOrphanException, NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
             Sala persistentSala = em.find(Sala.class, sala.getIdSala());
-            Cartelera idCarteleraOld = persistentSala.getIdCartelera();
-            Cartelera idCarteleraNew = sala.getIdCartelera();
-            if (idCarteleraNew != null) {
-                idCarteleraNew = em.getReference(idCarteleraNew.getClass(), idCarteleraNew.getIdCartelera());
-                sala.setIdCartelera(idCarteleraNew);
+            List<Cartelera> carteleraListOld = persistentSala.getCarteleraList();
+            List<Cartelera> carteleraListNew = sala.getCarteleraList();
+            List<String> illegalOrphanMessages = null;
+            for (Cartelera carteleraListOldCartelera : carteleraListOld) {
+                if (!carteleraListNew.contains(carteleraListOldCartelera)) {
+                    if (illegalOrphanMessages == null) {
+                        illegalOrphanMessages = new ArrayList<String>();
+                    }
+                    illegalOrphanMessages.add("You must retain Cartelera " + carteleraListOldCartelera + " since its idSala field is not nullable.");
+                }
             }
+            if (illegalOrphanMessages != null) {
+                throw new IllegalOrphanException(illegalOrphanMessages);
+            }
+            List<Cartelera> attachedCarteleraListNew = new ArrayList<Cartelera>();
+            for (Cartelera carteleraListNewCarteleraToAttach : carteleraListNew) {
+                carteleraListNewCarteleraToAttach = em.getReference(carteleraListNewCarteleraToAttach.getClass(), carteleraListNewCarteleraToAttach.getIdCartelera());
+                attachedCarteleraListNew.add(carteleraListNewCarteleraToAttach);
+            }
+            carteleraListNew = attachedCarteleraListNew;
+            sala.setCarteleraList(carteleraListNew);
             sala = em.merge(sala);
-            if (idCarteleraOld != null && !idCarteleraOld.equals(idCarteleraNew)) {
-                idCarteleraOld.getSalaList().remove(sala);
-                idCarteleraOld = em.merge(idCarteleraOld);
-            }
-            if (idCarteleraNew != null && !idCarteleraNew.equals(idCarteleraOld)) {
-                idCarteleraNew.getSalaList().add(sala);
-                idCarteleraNew = em.merge(idCarteleraNew);
+            for (Cartelera carteleraListNewCartelera : carteleraListNew) {
+                if (!carteleraListOld.contains(carteleraListNewCartelera)) {
+                    Sala oldIdSalaOfCarteleraListNewCartelera = carteleraListNewCartelera.getIdSala();
+                    carteleraListNewCartelera.setIdSala(sala);
+                    carteleraListNewCartelera = em.merge(carteleraListNewCartelera);
+                    if (oldIdSalaOfCarteleraListNewCartelera != null && !oldIdSalaOfCarteleraListNewCartelera.equals(sala)) {
+                        oldIdSalaOfCarteleraListNewCartelera.getCarteleraList().remove(carteleraListNewCartelera);
+                        oldIdSalaOfCarteleraListNewCartelera = em.merge(oldIdSalaOfCarteleraListNewCartelera);
+                    }
+                }
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
@@ -98,7 +127,7 @@ public class SalaJpaController implements Serializable {
         }
     }
 
-    public void destroy(Integer id) throws NonexistentEntityException {
+    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -110,10 +139,16 @@ public class SalaJpaController implements Serializable {
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The sala with id " + id + " no longer exists.", enfe);
             }
-            Cartelera idCartelera = sala.getIdCartelera();
-            if (idCartelera != null) {
-                idCartelera.getSalaList().remove(sala);
-                idCartelera = em.merge(idCartelera);
+            List<String> illegalOrphanMessages = null;
+            List<Cartelera> carteleraListOrphanCheck = sala.getCarteleraList();
+            for (Cartelera carteleraListOrphanCheckCartelera : carteleraListOrphanCheck) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("This Sala (" + sala + ") cannot be destroyed since the Cartelera " + carteleraListOrphanCheckCartelera + " in its carteleraList field has a non-nullable idSala field.");
+            }
+            if (illegalOrphanMessages != null) {
+                throw new IllegalOrphanException(illegalOrphanMessages);
             }
             em.remove(sala);
             em.getTransaction().commit();

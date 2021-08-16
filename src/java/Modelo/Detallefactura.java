@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,8 +19,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -27,62 +26,56 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "detallefactura")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Detallefactura.findAll", query = "SELECT d FROM Detallefactura d"),
-    @NamedQuery(name = "Detallefactura.findByIdDetalleFactura", query = "SELECT d FROM Detallefactura d WHERE d.idDetalleFactura = :idDetalleFactura"),
+    @NamedQuery(name = "Detallefactura.findByIdDetalle", query = "SELECT d FROM Detallefactura d WHERE d.idDetalle = :idDetalle"),
     @NamedQuery(name = "Detallefactura.findByCantidadTicket", query = "SELECT d FROM Detallefactura d WHERE d.cantidadTicket = :cantidadTicket"),
     @NamedQuery(name = "Detallefactura.findByCantidadSnack", query = "SELECT d FROM Detallefactura d WHERE d.cantidadSnack = :cantidadSnack"),
-    @NamedQuery(name = "Detallefactura.findByPrecioTotal", query = "SELECT d FROM Detallefactura d WHERE d.precioTotal = :precioTotal"),
-    @NamedQuery(name = "Detallefactura.findByPrecioUnitario", query = "SELECT d FROM Detallefactura d WHERE d.precioUnitario = :precioUnitario")})
+    @NamedQuery(name = "Detallefactura.findByPrecioTotal", query = "SELECT d FROM Detallefactura d WHERE d.precioTotal = :precioTotal")})
 public class Detallefactura implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_DetalleFactura")
-    private Integer idDetalleFactura;
+    @Column(name = "idDetalle", nullable = false)
+    private Integer idDetalle;
     @Basic(optional = false)
-    @Column(name = "cantidadTicket")
+    @Column(name = "cantidadTicket", nullable = false)
     private int cantidadTicket;
     @Basic(optional = false)
-    @Column(name = "cantidadSnack")
+    @Column(name = "cantidadSnack", nullable = false)
     private int cantidadSnack;
     @Basic(optional = false)
-    @Column(name = "precioTotal")
+    @Column(name = "precioTotal", nullable = false)
     private float precioTotal;
-    @Basic(optional = false)
-    @Column(name = "precioUnitario")
-    private float precioUnitario;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idDetalleFactura")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idDetalle", fetch = FetchType.LAZY)
     private List<Factura> facturaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idDetalleFactura")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idDetalle", fetch = FetchType.LAZY)
     private List<Ticket> ticketList;
-    @OneToMany(mappedBy = "idDetalleFactura")
-    private List<Snack> snackList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idDetalle", fetch = FetchType.LAZY)
+    private List<Carrito> carritoList;
 
     public Detallefactura() {
     }
 
-    public Detallefactura(Integer idDetalleFactura) {
-        this.idDetalleFactura = idDetalleFactura;
+    public Detallefactura(Integer idDetalle) {
+        this.idDetalle = idDetalle;
     }
 
-    public Detallefactura(Integer idDetalleFactura, int cantidadTicket, int cantidadSnack, float precioTotal, float precioUnitario) {
-        this.idDetalleFactura = idDetalleFactura;
+    public Detallefactura(Integer idDetalle, int cantidadTicket, int cantidadSnack, float precioTotal) {
+        this.idDetalle = idDetalle;
         this.cantidadTicket = cantidadTicket;
         this.cantidadSnack = cantidadSnack;
         this.precioTotal = precioTotal;
-        this.precioUnitario = precioUnitario;
     }
 
-    public Integer getIdDetalleFactura() {
-        return idDetalleFactura;
+    public Integer getIdDetalle() {
+        return idDetalle;
     }
 
-    public void setIdDetalleFactura(Integer idDetalleFactura) {
-        this.idDetalleFactura = idDetalleFactura;
+    public void setIdDetalle(Integer idDetalle) {
+        this.idDetalle = idDetalle;
     }
 
     public int getCantidadTicket() {
@@ -109,15 +102,6 @@ public class Detallefactura implements Serializable {
         this.precioTotal = precioTotal;
     }
 
-    public float getPrecioUnitario() {
-        return precioUnitario;
-    }
-
-    public void setPrecioUnitario(float precioUnitario) {
-        this.precioUnitario = precioUnitario;
-    }
-
-    @XmlTransient
     public List<Factura> getFacturaList() {
         return facturaList;
     }
@@ -126,7 +110,6 @@ public class Detallefactura implements Serializable {
         this.facturaList = facturaList;
     }
 
-    @XmlTransient
     public List<Ticket> getTicketList() {
         return ticketList;
     }
@@ -135,19 +118,18 @@ public class Detallefactura implements Serializable {
         this.ticketList = ticketList;
     }
 
-    @XmlTransient
-    public List<Snack> getSnackList() {
-        return snackList;
+    public List<Carrito> getCarritoList() {
+        return carritoList;
     }
 
-    public void setSnackList(List<Snack> snackList) {
-        this.snackList = snackList;
+    public void setCarritoList(List<Carrito> carritoList) {
+        this.carritoList = carritoList;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (idDetalleFactura != null ? idDetalleFactura.hashCode() : 0);
+        hash += (idDetalle != null ? idDetalle.hashCode() : 0);
         return hash;
     }
 
@@ -158,7 +140,7 @@ public class Detallefactura implements Serializable {
             return false;
         }
         Detallefactura other = (Detallefactura) object;
-        if ((this.idDetalleFactura == null && other.idDetalleFactura != null) || (this.idDetalleFactura != null && !this.idDetalleFactura.equals(other.idDetalleFactura))) {
+        if ((this.idDetalle == null && other.idDetalle != null) || (this.idDetalle != null && !this.idDetalle.equals(other.idDetalle))) {
             return false;
         }
         return true;
@@ -166,7 +148,7 @@ public class Detallefactura implements Serializable {
 
     @Override
     public String toString() {
-        return "Modelo.Detallefactura[ idDetalleFactura=" + idDetalleFactura + " ]";
+        return "Modelo.Detallefactura[ idDetalle=" + idDetalle + " ]";
     }
     
 }

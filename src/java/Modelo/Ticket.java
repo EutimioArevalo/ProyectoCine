@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,7 +18,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
@@ -25,48 +25,43 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "ticket")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Ticket.findAll", query = "SELECT t FROM Ticket t"),
     @NamedQuery(name = "Ticket.findByIdTicket", query = "SELECT t FROM Ticket t WHERE t.idTicket = :idTicket"),
     @NamedQuery(name = "Ticket.findByNroTicket", query = "SELECT t FROM Ticket t WHERE t.nroTicket = :nroTicket"),
-    @NamedQuery(name = "Ticket.findByCodigoQR", query = "SELECT t FROM Ticket t WHERE t.codigoQR = :codigoQR"),
-    @NamedQuery(name = "Ticket.findByTipo", query = "SELECT t FROM Ticket t WHERE t.tipo = :tipo"),
     @NamedQuery(name = "Ticket.findByNombrePelicula", query = "SELECT t FROM Ticket t WHERE t.nombrePelicula = :nombrePelicula"),
     @NamedQuery(name = "Ticket.findByPrecio", query = "SELECT t FROM Ticket t WHERE t.precio = :precio"),
-    @NamedQuery(name = "Ticket.findByAsientos", query = "SELECT t FROM Ticket t WHERE t.asientos = :asientos")})
+    @NamedQuery(name = "Ticket.findByAsientos", query = "SELECT t FROM Ticket t WHERE t.asientos = :asientos"),
+    @NamedQuery(name = "Ticket.findByTipo", query = "SELECT t FROM Ticket t WHERE t.tipo = :tipo")})
 public class Ticket implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_ticket")
+    @Column(name = "idTicket", nullable = false)
     private Integer idTicket;
     @Basic(optional = false)
-    @Column(name = "nroTicket")
+    @Column(name = "nroTicket", nullable = false)
     private int nroTicket;
     @Basic(optional = false)
-    @Column(name = "codigoQR")
-    private String codigoQR;
-    @Basic(optional = false)
-    @Column(name = "tipo")
-    private String tipo;
-    @Basic(optional = false)
-    @Column(name = "nombrePelicula")
+    @Column(name = "nombrePelicula", nullable = false, length = 200)
     private String nombrePelicula;
     @Basic(optional = false)
-    @Column(name = "precio")
+    @Column(name = "precio", nullable = false)
     private float precio;
     @Basic(optional = false)
-    @Column(name = "asientos")
-    private int asientos;
-    @JoinColumn(name = "Id_cartelera", referencedColumnName = "id_cartelera")
-    @ManyToOne(optional = false)
-    private Cartelera idcartelera;
-    @JoinColumn(name = "id_DetalleFactura", referencedColumnName = "id_DetalleFactura")
-    @ManyToOne(optional = false)
-    private Detallefactura idDetalleFactura;
+    @Column(name = "asientos", nullable = false, length = 100)
+    private String asientos;
+    @Basic(optional = false)
+    @Column(name = "tipo", nullable = false, length = 45)
+    private String tipo;
+    @JoinColumn(name = "idCartelera", referencedColumnName = "idCartelera", nullable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Cartelera idCartelera;
+    @JoinColumn(name = "idDetalle", referencedColumnName = "idDetalle", nullable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Detallefactura idDetalle;
 
     public Ticket() {
     }
@@ -75,14 +70,13 @@ public class Ticket implements Serializable {
         this.idTicket = idTicket;
     }
 
-    public Ticket(Integer idTicket, int nroTicket, String codigoQR, String tipo, String nombrePelicula, float precio, int asientos) {
+    public Ticket(Integer idTicket, int nroTicket, String nombrePelicula, float precio, String asientos, String tipo) {
         this.idTicket = idTicket;
         this.nroTicket = nroTicket;
-        this.codigoQR = codigoQR;
-        this.tipo = tipo;
         this.nombrePelicula = nombrePelicula;
         this.precio = precio;
         this.asientos = asientos;
+        this.tipo = tipo;
     }
 
     public Integer getIdTicket() {
@@ -101,22 +95,6 @@ public class Ticket implements Serializable {
         this.nroTicket = nroTicket;
     }
 
-    public String getCodigoQR() {
-        return codigoQR;
-    }
-
-    public void setCodigoQR(String codigoQR) {
-        this.codigoQR = codigoQR;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
-
     public String getNombrePelicula() {
         return nombrePelicula;
     }
@@ -133,28 +111,36 @@ public class Ticket implements Serializable {
         this.precio = precio;
     }
 
-    public int getAsientos() {
+    public String getAsientos() {
         return asientos;
     }
 
-    public void setAsientos(int asientos) {
+    public void setAsientos(String asientos) {
         this.asientos = asientos;
     }
 
-    public Cartelera getIdcartelera() {
-        return idcartelera;
+    public String getTipo() {
+        return tipo;
     }
 
-    public void setIdcartelera(Cartelera idcartelera) {
-        this.idcartelera = idcartelera;
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 
-    public Detallefactura getIdDetalleFactura() {
-        return idDetalleFactura;
+    public Cartelera getIdCartelera() {
+        return idCartelera;
     }
 
-    public void setIdDetalleFactura(Detallefactura idDetalleFactura) {
-        this.idDetalleFactura = idDetalleFactura;
+    public void setIdCartelera(Cartelera idCartelera) {
+        this.idCartelera = idCartelera;
+    }
+
+    public Detallefactura getIdDetalle() {
+        return idDetalle;
+    }
+
+    public void setIdDetalle(Detallefactura idDetalle) {
+        this.idDetalle = idDetalle;
     }
 
     @Override

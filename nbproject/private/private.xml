@@ -4,8 +4,58 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/web/Vista/adminPeliculas/adminPeliculas.jsp</file>
-            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/web/Vista/adminPeliculas/cloudinary.js</file>
             <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/web/Vista/adminsalas/adminsala.jsp</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/src/java/Controlador/JPA/TicketJpaController.java</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/web/Vista/ModificarCartelera/estiloModificarCar.css</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/src/java/Controlador/DAO/PersonaDAO.java</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/src/java/Controlador/DAO/DetalleFacturaDAO.java</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/web/Vista/AdministrarEmpleados/AdministrarEmpleados.jsp</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/src/java/Controlador/DAO/PeliculaDAO.java</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/src/java/Controlador/CtrlPayment.java</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/src/java/Controlador/DAO/TicketDAO.java</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/src/java/Controlador/DAO/CuentaDAO.java</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/web/Vista/adminsnacks/adminsnacks.css</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/web/Vista/registrarse/registrar.css</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/web/Vista/inicio/inicio.jsp</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/web/Vista/ListaCarteleras/estiloListaCarteleras.css</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/src/java/Controlador/DAO/CarteleraDAO.java</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/src/java/Controlador/JPA/CuentaJpaController.java</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/web/Vista/registrarse/Pag_Registrarse.jsp</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/web/Vista/comprarTicket/seleccionarPelicula.jsp</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/web/Vista/ModificarCartelera/ModificarCartelera.jsp</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/web/Vista/comprarSnacks/comprarSnacks.css</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/src/java/Controlador/DAO/SalaDAO.java</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/web/Vista/comprarTicket/comprarTicket.css</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/web/Vista/comprarTicket/seleccionarAsiento.jsp</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/web/Vista/adminsalas/adminsala.css</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/web/styles.css</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/src/java/Controlador/JPA/FacturaJpaController.java</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/nbproject/build-impl.xml</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/web/Vista/adminPeliculas/adminPeliculas.css</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/src/java/Controlador/JPA/CarritoJpaController.java</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/src/java/Controlador/JPA/RolJpaController.java</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/src/java/Controlador/JPA/PersonaJpaController.java</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/src/conf/persistence.xml</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/src/java/Controlador/JPA/SalaJpaController.java</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/web/Vista/informacionPelicula/Pag_InfoPeli.jsp</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/src/java/Controlador/DAO/FacturaDAO.java</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/web/index.jsp</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/src/java/Controlador/JPA/CarteleraJpaController.java</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/src/java/Controlador/JPA/PeliculaJpaController.java</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/web/Vista/comprarTicket/tipoAsientos.jsp</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/web/Vista/inicio/registro.jsp</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/src/java/Controlador/Utiles.java</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/web/Vista/AdministrarEmpleados/estiloAdminEmpleado.css</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/web/Vista/comprarTicket/confirmarCompra.jsp</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/web/Vista/comprarTicket/comprarTicket.jsp</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/web/Vista/adminsnacks/adminsnacks.jsp</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/web/Vista/comprarSnacks/comprarSnacks.jsp</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/src/java/Controlador/JPA/SnackJpaController.java</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/web/Vista/ListaCarteleras/ListaCarteleras.jsp</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/src/java/Controlador/DAO/SnackDAO.java</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/web/Vista/inicio/inicio.css</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/src/java/Controlador/JPA/DetallefacturaJpaController.java</file>
+            <file>file:/C:/Users/timoa/Documents/NetBeansProjects/ProyectoCineWEB/src/java/Controlador/DAO/CarritoDAO.java</file>
         </group>
     </open-files>
 </project-private>

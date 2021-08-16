@@ -5,6 +5,7 @@
  */
 package Controlador;
 
+import Modelo.Cartelera;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,7 +20,13 @@ import org.json.JSONObject;
  */
 public class CtrlPayment {
 
-    public String prepareCheckout() throws IOException {
+    /**
+     * Metodo para generar la compra con ACIPayment.
+     * @param precio Destinado a recibir el valor total de la compra.
+     * @return Retorna un JSON convertido en String del detalle de la compra.
+     * @throws IOException En caso de un error al momento de generar la compra se hará presente.
+     */
+    public String prepareCheckout(float precio) throws IOException {
         URL url = new URL("https://test.oppwa.com/v1/checkouts");
 
         HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
@@ -30,9 +37,9 @@ public class CtrlPayment {
 
         String data = ""
                 + "entityId=8a8294175d602369015d73bf009f1808"
-                + "&amount=92.00"
-                + "&currency=EUR"
-                + "&paymentType=DB";
+                + "&amount="+precio
+                + "&currency=USD"
+                + "&paymentType=DB, CD";
 
         DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
         wr.writeBytes(data);
@@ -50,6 +57,12 @@ public class CtrlPayment {
         return IOUtils.toString(is);
     }
 
+    /**
+     * Metodo para obtener el "Status" de la compra.
+     * @param id Recibe el id de la compra que se encuentra en el JSON
+     * @return  Retorno el checkout de la compra. 
+     * @throws IOException En caso de error se tomará la excepción.
+     */
     public String paymentStatus(String id) throws IOException {
         URL url = new URL("https://test.oppwa.com/v1/checkouts/" + id + " /paymen");
 
@@ -67,7 +80,12 @@ public class CtrlPayment {
 
         return IOUtils.toString(is);
     }
-
+    
+    /**
+     * Metodo para determinar el id del JSON generado por el ACIPayment.
+     * @param json Recibe el JSON convertido en String para obtener el id.
+     * @return Retorna el id con el que se realizará el pago.
+     */
     public String obtenerId(String json) {
         String id = "Vacio";
         try {

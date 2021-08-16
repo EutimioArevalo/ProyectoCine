@@ -12,7 +12,7 @@
 <%@page import="Modelo.Pelicula"%>
 <%@page import="Controlador.JPA.PeliculaJpaController"%>
 <%@page import="Controlador.DAO.PeliculaDAO"%>
-<%@page contentType="text/html; charset=ISO-8859-1" %>
+<%@page contentType="text/html" pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -22,6 +22,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <title>Administrar Películas</title>
+        <link rel="shortcut icon" href="https://res.cloudinary.com/djsa7v6bs/image/upload/v1629058563/boleto_p5b5s5.png">
         <!--FONT AWESOME-->
         <!--FONT AWESOME-->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
@@ -43,7 +44,7 @@
         int cont = 0;
         List<Pelicula> aux = pjc.findPeliculaEntities();
         int id = 0;
-        
+
         if (request.getParameter("btnAgregar") != null) {
 
             String titulo = request.getParameter("txtTitulo").toString();
@@ -63,7 +64,7 @@
         }
 
         if (request.getParameter("btnEditar") != null) {
-            int idPeli = Integer.valueOf(sesion.getAttribute("idPelicula").toString());
+            int idPeli = Integer.valueOf(sesion.getAttribute("idPeli").toString());
             String titulo = request.getParameter("txtTitulo").toString();
             String sipnosis = request.getParameter("areaSipnosis").toString();
             String trailer = request.getParameter("txtTrailer").toString();
@@ -78,12 +79,13 @@
             String resolucion = request.getParameter("cbxResolucion").toString();
             String Formato = request.getParameter("cbxFormato").toString();
             pdao.editar(idPeli, titulo, sipnosis, trailer, hidden, fechaEstreno, duracion, genero, idioma, director, actor, clasificacion, resolucion, Formato);
-            sesion.setAttribute("idPelicula", null);
+
+            sesion.setAttribute("idPeli", null);
         }
 
         for (int i = 0; i < aux.size(); i++) {
             if (request.getParameter("btnSeleccionar" + i) != null) {
-                sesion.setAttribute("idPelicula", pjc.findPeliculaEntities().get(i).getIdPelicula());
+                sesion.setAttribute("idPeli", pjc.findPeliculaEntities().get(i).getIdPelicula());
             }
         }
 
@@ -92,13 +94,13 @@
     <body>
         <div class="container">
             <nav class="nav-main">
-                <img src="https://www.pngkit.com/png/full/786-7863517_para-cine-logo-de-cine-colombia-png.png" alt="Cine LOGO" class="logo">
+                <img src="https://res.cloudinary.com/djsa7v6bs/image/upload/v1629058563/boleto_p5b5s5.png" alt="Cine LOGO" class="logo">
                 <ul class="nav-menu">
                     <li>
                         <a href="../inicio/inicio.jsp">Inicio</a>
                     </li>
                     <li>
-                        <a href="../ModificarCartelera/ModificarCartelera.jsp">Modificar Carteleras</a>
+                        <a href="../ListaCarteleras/ListaCarteleras.jsp">Modificar Carteleras</a>
                     </li>
                     <li>
                         <a href="../adminPeliculas/adminPeliculas.jsp">Administrar Peliculas</a>
@@ -110,7 +112,7 @@
                         <a href="../adminsalas/adminsala.jsp">Gestionar Sala</a>
                     </li>
                     <li>
-                        <a href="../comprarTicket/comprarTicket.jsp">Vender Ticket</a>
+                        <a href="../comprarTicket/seleccionarPelicula.jsp">Vender Ticket</a>
                     </li>
                     <li>
                         <a href="../registrarse/Pag_Registrarse.jsp">Modificar Información</a>
@@ -125,11 +127,11 @@
             <div class="formulario">
                 <center>
                     <form action="adminPeliculas.jsp" method="POST" class="form-pelicula">
-                        
-                        <%if (sesion.getAttribute("idPelicula") == null) { %>
-                        
+
+                        <%if (sesion.getAttribute("idPeli") == null) { %>
+
                         <p>Titulo de la Pelicula:  <input type="text" name="txtTitulo"></p>
-                        <p>Sipnosis de la pelicula:  <input type="textarea" name="areaSipnosis"></p>
+                        <p>Sipnosis de la pelicula:  <textarea type="textarea" name="areaSipnosis" cols="50" rows="5"></textarea></p>
                         <P>URL del Trailer (Youtube):  <input type="text" name="txtTrailer"></p>
                         <P>Portada de la pelicula:  <img id="id-portada"></P>
                         <input type="hidden" name="hidden" id="hidden">
@@ -182,13 +184,14 @@
                             <option value="IMAX">
                             <option value="Digital 3D">
                         </datalist>
+                        <input class= "buttons" type="submit" name="btnAgregar" value="Agregar">
 
                         <%} else {
-                            String Sid = sesion.getAttribute("idPelicula").toString();
+                            String Sid = sesion.getAttribute("idPeli").toString();
                             id = Integer.valueOf(Sid);
                         %>
                         <p>Titulo de la Pelicula:  <input type="text" name="txtTitulo" value="<%=pdao.buscar(id).getTitulo()%>"></p>
-                        <p>Sipnosis de la pelicula:  <input type="textarea" name="areaSipnosis" value="<%=pdao.buscar(id).getSipnosis()%>"></p>
+                        <p>Sipnosis de la pelicula:  <textarea type="textarea" name="areaSipnosis" cols="50" rows="5"><%=pdao.buscar(id).getSipnosis()%></textarea>
                         <P>URL del Trailer (Youtube):  <input type="text" name="txtTrailer" value="<%=pdao.buscar(id).getTrailer()%>"></p>
                         <P>Portada de la pelicula:  <img src="<%=pdao.buscar(id).getPortada()%>" id="id-portada" ></P>
                         <input type="hidden" name="hidden" id="hidden" value="<%=pdao.buscar(id).getPortada()%>">
@@ -220,7 +223,7 @@
                         </datalist>
 
                         <P>Director:  <input type="text" name="txtDirector" value="<%=pdao.buscar(id).getDirector()%>"></P>
-                        <P>Actor Principal:  <input type="text" name="txtActor" value="<%=pdao.buscar(id).getActorPrincipal()%>"></P>
+                        <P>Actor Principal:  <input type="text" name="txtActor" value="<%=pdao.buscar(id).getElenco()%>"></P>
 
                         <P>Clasificación:  <input list="clasificacion" name="cbxClasificacion" value="<%=pdao.buscar(id).getClasificacion()%>"></P>
                         <datalist id="clasificacion">
@@ -239,16 +242,18 @@
                             <option value="4K">
                         </datalist>
 
-                        <P>Formato:  <input list="formato" name="cbxFormato" value="<%=pdao.buscar(id).getFomato()%>"></P>                
+                        <P>Formato:  <input list="formato" name="cbxFormato" value="<%=pdao.buscar(id).getFormato()%>"></P>                
                         <datalist id="formato">
                             <option value="VistaVision">
                             <option value="IMAX">
                             <option value="Digital 3D">
                         </datalist>
+                        
+                        <input class= "buttons" type="submit" name="btnEditar" value="Editar">
+                        <input class= "buttons" type="submit" name="btnDarDeBaja" value="Eliminar">
                         <%}%>
-                        <input type="submit" name="btnAgregar" value="Agregar">
-                        <input type="submit" name="btnEditar" value="Editar">
-                        <input type="submit" name="btnDarDeBaja" value="Eliminar">
+                        
+                        
                     </form>
                 </center>
             </div>
@@ -269,15 +274,15 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <%                                
-for (Pelicula pelicula : pjc.findPeliculaEntities()) {
+                            <%
+                                for (Pelicula pelicula : pjc.findPeliculaEntities()) {
                             %>
                             <tr>
                                 <td><%=pelicula.getTitulo()%></td>
                                 <td><%=pelicula.getGenero()%></td>
                                 <td><%=pelicula.getIdioma()%></td>
                                 <td><%=pelicula.getDirector()%></td>
-                                <td><%=pelicula.getActorPrincipal()%></td>
+                                <td><%=pelicula.getElenco()%></td>
                                 <td><%=pelicula.getClasificacion()%></td>
                                 <td>
                                     <form action="adminPeliculas.jsp" method="POST">

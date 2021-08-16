@@ -110,6 +110,16 @@ margin-top: 60px;
     margin-bottom: auto;
 }
 
+.buttons{
+    border: none;
+    padding: 8px;
+    width: 10%;
+    font-size: 16px;
+    border: 1px ;
+    font-family: 'Oswald', sans-serif;
+
+}
+
 
 
 

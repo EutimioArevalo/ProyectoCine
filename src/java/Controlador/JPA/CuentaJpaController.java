@@ -31,7 +31,6 @@ public class CuentaJpaController implements Serializable {
     public CuentaJpaController() {
     }
     
-    
     private EntityManagerFactory emf = Persistence.createEntityManagerFactory("ProyectoCineWEBPU");
 
     public EntityManager getEntityManager() {

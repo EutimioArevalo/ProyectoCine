@@ -6,23 +6,22 @@
 package Modelo;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -30,7 +29,6 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "cartelera")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Cartelera.findAll", query = "SELECT c FROM Cartelera c"),
     @NamedQuery(name = "Cartelera.findByIdCartelera", query = "SELECT c FROM Cartelera c WHERE c.idCartelera = :idCartelera"),
@@ -43,24 +41,29 @@ public class Cartelera implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_cartelera")
+    @Column(name = "idCartelera", nullable = false)
     private Integer idCartelera;
     @Basic(optional = false)
-    @Column(name = "horario")
+    @Column(name = "horario", nullable = false, length = 10)
     private String horario;
     @Basic(optional = false)
-    @Column(name = "duracionCartelera")
-    @Temporal(TemporalType.DATE)
-    private Date duracionCartelera;
+    @Column(name = "duracionCartelera", nullable = false, length = 10)
+    private String duracionCartelera;
     @Basic(optional = false)
-    @Column(name = "precio")
+    @Column(name = "precio", nullable = false)
     private float precio;
-    @OneToMany(mappedBy = "idCartelera")
-    private List<Pelicula> peliculaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idcartelera")
+    @Basic(optional = false)
+    @Lob
+    @Column(name = "asientos", nullable = false, length = 1073741824)
+    private String asientos;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idCartelera", fetch = FetchType.LAZY)
     private List<Ticket> ticketList;
-    @OneToMany(mappedBy = "idCartelera")
-    private List<Sala> salaList;
+    @JoinColumn(name = "idPelicula", referencedColumnName = "idPelicula", nullable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Pelicula idPelicula;
+    @JoinColumn(name = "idSala", referencedColumnName = "idSala", nullable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Sala idSala;
 
     public Cartelera() {
     }
@@ -69,11 +72,12 @@ public class Cartelera implements Serializable {
         this.idCartelera = idCartelera;
     }
 
-    public Cartelera(Integer idCartelera, String horario, Date duracionCartelera, float precio) {
+    public Cartelera(Integer idCartelera, String horario, String duracionCartelera, float precio, String asientos) {
         this.idCartelera = idCartelera;
         this.horario = horario;
         this.duracionCartelera = duracionCartelera;
         this.precio = precio;
+        this.asientos = asientos;
     }
 
     public Integer getIdCartelera() {
@@ -92,11 +96,11 @@ public class Cartelera implements Serializable {
         this.horario = horario;
     }
 
-    public Date getDuracionCartelera() {
+    public String getDuracionCartelera() {
         return duracionCartelera;
     }
 
-    public void setDuracionCartelera(Date duracionCartelera) {
+    public void setDuracionCartelera(String duracionCartelera) {
         this.duracionCartelera = duracionCartelera;
     }
 
@@ -108,16 +112,14 @@ public class Cartelera implements Serializable {
         this.precio = precio;
     }
 
-    @XmlTransient
-    public List<Pelicula> getPeliculaList() {
-        return peliculaList;
+    public String getAsientos() {
+        return asientos;
     }
 
-    public void setPeliculaList(List<Pelicula> peliculaList) {
-        this.peliculaList = peliculaList;
+    public void setAsientos(String asientos) {
+        this.asientos = asientos;
     }
 
-    @XmlTransient
     public List<Ticket> getTicketList() {
         return ticketList;
     }
@@ -126,13 +128,20 @@ public class Cartelera implements Serializable {
         this.ticketList = ticketList;
     }
 
-    @XmlTransient
-    public List<Sala> getSalaList() {
-        return salaList;
+    public Pelicula getIdPelicula() {
+        return idPelicula;
     }
 
-    public void setSalaList(List<Sala> salaList) {
-        this.salaList = salaList;
+    public void setIdPelicula(Pelicula idPelicula) {
+        this.idPelicula = idPelicula;
+    }
+
+    public Sala getIdSala() {
+        return idSala;
+    }
+
+    public void setIdSala(Sala idSala) {
+        this.idSala = idSala;
     }
 
     @Override

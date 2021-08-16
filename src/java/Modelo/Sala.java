@@ -6,19 +6,19 @@
 package Modelo;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
@@ -26,45 +26,39 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "sala")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Sala.findAll", query = "SELECT s FROM Sala s"),
     @NamedQuery(name = "Sala.findByIdSala", query = "SELECT s FROM Sala s WHERE s.idSala = :idSala"),
-    @NamedQuery(name = "Sala.findByNroAsientos", query = "SELECT s FROM Sala s WHERE s.nroAsientos = :nroAsientos"),
     @NamedQuery(name = "Sala.findByNroSala", query = "SELECT s FROM Sala s WHERE s.nroSala = :nroSala"),
-    @NamedQuery(name = "Sala.findByEstado", query = "SELECT s FROM Sala s WHERE s.estado = :estado"),
-    @NamedQuery(name = "Sala.findByFilas", query = "SELECT s FROM Sala s WHERE s.filas = :filas"),
-    @NamedQuery(name = "Sala.findByColumnas", query = "SELECT s FROM Sala s WHERE s.columnas = :columnas")})
+    @NamedQuery(name = "Sala.findByNroFilas", query = "SELECT s FROM Sala s WHERE s.nroFilas = :nroFilas"),
+    @NamedQuery(name = "Sala.findByNroColumnas", query = "SELECT s FROM Sala s WHERE s.nroColumnas = :nroColumnas"),
+    @NamedQuery(name = "Sala.findByNroAsientos", query = "SELECT s FROM Sala s WHERE s.nroAsientos = :nroAsientos"),
+    @NamedQuery(name = "Sala.findByEstado", query = "SELECT s FROM Sala s WHERE s.estado = :estado")})
 public class Sala implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_sala")
+    @Column(name = "idSala", nullable = false)
     private Integer idSala;
     @Basic(optional = false)
-    @Column(name = "nroAsientos")
-    private int nroAsientos;
-    @Basic(optional = false)
-    @Column(name = "nroSala")
+    @Column(name = "nroSala", nullable = false)
     private int nroSala;
     @Basic(optional = false)
-    @Column(name = "estado")
+    @Column(name = "nroFilas", nullable = false)
+    private int nroFilas;
+    @Basic(optional = false)
+    @Column(name = "nroColumnas", nullable = false)
+    private int nroColumnas;
+    @Basic(optional = false)
+    @Column(name = "nroAsientos", nullable = false)
+    private int nroAsientos;
+    @Basic(optional = false)
+    @Column(name = "estado", nullable = false, length = 45)
     private String estado;
-    @Basic(optional = false)
-    @Lob
-    @Column(name = "asientos")
-    private String asientos;
-    @Basic(optional = false)
-    @Column(name = "filas")
-    private int filas;
-    @Basic(optional = false)
-    @Column(name = "columnas")
-    private int columnas;
-    @JoinColumn(name = "id_cartelera", referencedColumnName = "id_cartelera")
-    @ManyToOne
-    private Cartelera idCartelera;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idSala", fetch = FetchType.LAZY)
+    private List<Cartelera> carteleraList;
 
     public Sala() {
     }
@@ -73,14 +67,13 @@ public class Sala implements Serializable {
         this.idSala = idSala;
     }
 
-    public Sala(Integer idSala, int nroAsientos, int nroSala, String estado, String asientos, int filas, int columnas) {
+    public Sala(Integer idSala, int nroSala, int nroFilas, int nroColumnas, int nroAsientos, String estado) {
         this.idSala = idSala;
-        this.nroAsientos = nroAsientos;
         this.nroSala = nroSala;
+        this.nroFilas = nroFilas;
+        this.nroColumnas = nroColumnas;
+        this.nroAsientos = nroAsientos;
         this.estado = estado;
-        this.asientos = asientos;
-        this.filas = filas;
-        this.columnas = columnas;
     }
 
     public Integer getIdSala() {
@@ -91,20 +84,36 @@ public class Sala implements Serializable {
         this.idSala = idSala;
     }
 
-    public int getNroAsientos() {
-        return nroAsientos;
-    }
-
-    public void setNroAsientos(int nroAsientos) {
-        this.nroAsientos = nroAsientos;
-    }
-
     public int getNroSala() {
         return nroSala;
     }
 
     public void setNroSala(int nroSala) {
         this.nroSala = nroSala;
+    }
+
+    public int getNroFilas() {
+        return nroFilas;
+    }
+
+    public void setNroFilas(int nroFilas) {
+        this.nroFilas = nroFilas;
+    }
+
+    public int getNroColumnas() {
+        return nroColumnas;
+    }
+
+    public void setNroColumnas(int nroColumnas) {
+        this.nroColumnas = nroColumnas;
+    }
+
+    public int getNroAsientos() {
+        return nroAsientos;
+    }
+
+    public void setNroAsientos(int nroAsientos) {
+        this.nroAsientos = nroAsientos;
     }
 
     public String getEstado() {
@@ -115,36 +124,12 @@ public class Sala implements Serializable {
         this.estado = estado;
     }
 
-    public String getAsientos() {
-        return asientos;
+    public List<Cartelera> getCarteleraList() {
+        return carteleraList;
     }
 
-    public void setAsientos(String asientos) {
-        this.asientos = asientos;
-    }
-
-    public int getFilas() {
-        return filas;
-    }
-
-    public void setFilas(int filas) {
-        this.filas = filas;
-    }
-
-    public int getColumnas() {
-        return columnas;
-    }
-
-    public void setColumnas(int columnas) {
-        this.columnas = columnas;
-    }
-
-    public Cartelera getIdCartelera() {
-        return idCartelera;
-    }
-
-    public void setIdCartelera(Cartelera idCartelera) {
-        this.idCartelera = idCartelera;
+    public void setCarteleraList(List<Cartelera> carteleraList) {
+        this.carteleraList = carteleraList;
     }
 
     @Override

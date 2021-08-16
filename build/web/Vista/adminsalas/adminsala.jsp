@@ -9,14 +9,15 @@
 <%@page import="java.util.List"%>
 <%@page import="Controlador.JPA.SalaJpaController"%>
 <%@page import="Controlador.DAO.SalaDAO"%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8">
+        <meta charset="ISO-8859-1">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>vista_sala</title>
+        <link rel="shortcut icon" href="https://res.cloudinary.com/djsa7v6bs/image/upload/v1629058563/boleto_p5b5s5.png">
 
         <!--FONT AWESOME-->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
@@ -30,17 +31,56 @@
     </head>
     <%
         HttpSession sesion = request.getSession();
+
         SalaDAO sdao = new SalaDAO();
         SalaJpaController ctrlSala = new SalaJpaController();
         List<Sala> aux = ctrlSala.findSalaEntities();
 
-        int output = 0;
+        //System.out.println("Estoy en: "+sdao.obtenerSala(1).getIdSala());
+        String idSala = "";
+        if (sesion.getAttribute("idSala") != null) {
+            idSala = sesion.getAttribute("idSala").toString();
+            System.out.println(idSala);
+        } else {
+            idSala = null;
+            //System.out.println(idSala);
+        }
+
         if (request.getParameter("btnAgregar") != null) {
             int filas = Integer.valueOf(request.getParameter("snFilas"));
             int columnas = Integer.valueOf(request.getParameter("snColumnas"));
             int nroAsientos = filas * columnas;
             int nroSala = aux.size() + 1;
             sdao.agregar(nroAsientos, nroSala, filas, columnas);
+            response.sendRedirect("../../Vista/adminsalas/adminsala.jsp");
+        }
+
+        if (request.getParameter("btnModificar") != null) {
+            int filas = Integer.valueOf(request.getParameter("snFilas"));
+            int columnas = Integer.valueOf(request.getParameter("snColumnas"));
+            int nroAsientos = filas * columnas;
+            
+            String estado = "";
+            if (request.getParameter("disponibilidad").toString().equals("Disponible")) {
+                estado = "activo";
+            } else {
+                estado = "inactivo";
+            }
+            sdao.editar(Integer.valueOf(idSala), nroAsientos, filas, columnas, estado);
+            out.print("<script>alert('Editado con exito');</script>");
+            sesion.setAttribute("idSala", null);
+            response.sendRedirect("../../Vista/adminsalas/adminsala.jsp");
+        }
+
+        if (request.getParameter("btnSeleccionar") != null) {
+            for (int i = 1; i <= aux.size(); i++) {
+                if (request.getParameter("nroSalas").toString().equalsIgnoreCase("Sala: " + i)) {
+                    //System.out.println("Estoy en la sala: " + i);
+                    System.out.println(sdao.obtenerSala(i).getIdSala());
+                    sesion.setAttribute("idSala", sdao.obtenerSala(i).getIdSala());
+                    response.sendRedirect("../../Vista/adminsalas/adminsala.jsp");
+                }
+            }
         }
 
 
@@ -50,13 +90,13 @@
 
         <div class="container">
             <nav class="nav-main">
-                <img src="https://www.pngkit.com/png/full/786-7863517_para-cine-logo-de-cine-colombia-png.png" alt="Cine LOGO" class="logo">
+                <img src="https://res.cloudinary.com/djsa7v6bs/image/upload/v1629058563/boleto_p5b5s5.png" alt="Cine LOGO" class="logo">
                 <ul class="nav-menu">
                     <li>
                         <a href="../inicio/inicio.jsp">Inicio</a>
                     </li>
                     <li>
-                        <a href="../ModificarCartelera/ModificarCartelera.jsp">Modificar Carteleras</a>
+                        <a href="../ListaCarteleras/ListaCarteleras.jsp">Modificar Carteleras</a>
                     </li>
                     <li>
                         <a href="../adminPeliculas/adminPeliculas.jsp">Administrar Peliculas</a>
@@ -68,10 +108,10 @@
                         <a href="../adminsalas/adminsala.jsp">Gestionar Sala</a>
                     </li>
                     <li>
-                        <a href="../comprarTicket/comprarTicket.jsp">Vender Ticket</a>
+                        <a href="../comprarTicket/seleccionarPelicula.jsp">Vender Ticket</a>
                     </li>
                     <li>
-                        <a href="../registrarse/Pag_Registrarse.jsp">Modificar InformaciÃ³n</a>
+                        <a href="../registrarse/Pag_Registrarse.jsp">Modificar Información</a>
                     </li>
                     <li>
                         <a href="../adminsnacks/adminsnacks.jsp">Administrar Snacks</a>
@@ -80,57 +120,81 @@
             </nav>
             <hr>
 
-            <section class="centrado">
-                <section class="vista_sala">
-                    <h5>Administracion salas:</h5>
-                    <div class="Lista_despegable"> <!--inicio box-->
-                        <p>Salas:</p>
-                        <form >
-                            <select name="nroSalas" style="width: 130px;">
-                                <%                                    for (Sala sala : aux) {
+            <h5>Administracion salas:</h5>
+            <div class="Lista_despegable"> <!--inicio box-->
+                <p><%= (idSala != null ? "Sala: " + idSala : "Salas:")%></p>
 
-                                    
-                                    
+                <form action="adminsala.jsp" method="post">
 
-                                %>
-                                <option>Sala: <%sala.getNroSala(); %></option>
-                                <%}%>
-                            </select>
-                            <input name="btnSeleccionar" type="submit" value="Seleccionar Sala">
+                    <% if (idSala == null) {
+                    %>
+
+                    <select name="nroSalas" style="width: 130px;">
+                        <option></option>
+                        <%                                    for (Sala sala : aux) {
+                        %>
+
+                        <option>Sala: <%=sala.getNroSala()%></option>
+                        <%}%>
+                    </select>
+                    <br>
+                    <input name="btnSeleccionar" type="submit" value="Seleccionar Sala">
+
+                    <p>Filas:</p>
+                    <input name="snFilas" type="number" min="3" id="idFilas">
+
+                    <p>Columnas:</p>
+                    <input name="snColumnas" type="number" min="7" id="idColumnas">
+                    <br>
+                    <input class="buttons" name="btnAgregar" type="submit" value="Agregar sala">
+
+                    <%} else {
+
+                    %>
+
+                    <select name="nroSalas" style="width: 130px;">
+                        <option></option>
+                        <%                                    for (Sala sala : aux) {
+                        %>
+
+                        <option>Sala: <%=sala.getNroSala()%></option>
+                        <%}%>
+                    </select>
+                    <br>
+                    <input name="btnSeleccionar" type="submit" value="Seleccionar Sala">
 
 
-                            <p>Filas:</p>
-                            <input name="snFilas" type="number" min="5" id="idFilas">
+                    <p>Filas:</p>
+                    <input name="snFilas" type="number" min="3" id="idFilas" value="<%=sdao.obtenerSalaID(Integer.valueOf(idSala)).getNroFilas()%>">
 
-                            <p>Columnas:</p>
-                            <input name="snColumnas" type="number" min="10" id="idColumnas">
+                    <p>Columnas:</p>
+                    <input name="snColumnas" type="number" min="7" id="idColumnas" value="<%=sdao.obtenerSalaID(Integer.valueOf(idSala)).getNroColumnas()%>">
 
-                            <%if (sesion.getAttribute ( 
-                                
-                            "idSala") != null) {
-                                    
-                            %>
-                            <h6>Nro. asientos</h6>
-                            <output></output>
-                                <%}%>
-                            <p>Disponibilidad:</p>
+                    <h6>Nro. asientos</h6>
+                    <output><%=sdao.obtenerSalaID(Integer.valueOf(idSala)).getNroAsientos()%></output>
 
-                            <p class=" caja">
-                                <select name="disponibilidad" style="width: 130px;" >
-                                    <!--opciones para el numero de salas-->
-                                    <option> No disponible </option>
-                                    <option> Disponible </option>
+                    <p>Disponibilidad:</p>
 
-                                    <br></p>
+                    <p class=" caja">
+                        <select name="disponibilidad" style="width: 130px;">
+                            <!--opciones para el numero de salas-->
+                            <%if (sdao.obtenerSalaID(Integer.valueOf(idSala)).getEstado().equals("activo")) {%>
+                            <option> Disponible </option>
+                            <option> No disponible </option>
+                            <%} else {%>
+                            <option> No disponible </option>
+                            <option> Disponible </option>
+                            <%}%>
+                        </select>
+                    </p>
 
-                                    <input name="btnAgregar" type="submit" value="Agregar sala">
+                    <br><!-- comment -->
 
-                                    <input name="btnDarBaja" type="submit" value="Dar de Baja">
-                                    </p>
-                                    </form>
-                                    </div> 
-                                    </section>
-                                    </section>
-                                    </div>
-                                    </body>
-                                    </html>
+                    <input class="buttons" name="btnModificar" type="submit" value="Modificar">
+                    <input class="buttons" name="btnDarBaja" type="submit" value="Dar de Baja">
+                    <%}%>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

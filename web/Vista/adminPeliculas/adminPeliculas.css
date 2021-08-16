@@ -37,6 +37,10 @@
     height: 285px;
 }
 
+.form-pelicula input[type=textarea]{
+    height: 300px
+}
+
 #portada{
     position: relative;
     top: 0px;
@@ -47,4 +51,19 @@
     overflow: scroll;
     height: 200px;
     width: 500px;
+}
+
+.form-pelicula .buttons{
+    border: none;
+    padding: 8px;
+    width: 10%;
+    font-size: 16px;
+}
+
+
+.buttons{
+
+    border: 1px ;
+    font-family: 'Oswald', sans-serif;
+
 }

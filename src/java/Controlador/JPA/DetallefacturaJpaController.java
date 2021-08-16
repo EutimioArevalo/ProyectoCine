@@ -7,7 +7,6 @@ package Controlador.JPA;
 
 import Controlador.JPA.exceptions.IllegalOrphanException;
 import Controlador.JPA.exceptions.NonexistentEntityException;
-import Modelo.Detallefactura;
 import java.io.Serializable;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
@@ -17,7 +16,8 @@ import Modelo.Factura;
 import java.util.ArrayList;
 import java.util.List;
 import Modelo.Ticket;
-import Modelo.Snack;
+import Modelo.Carrito;
+import Modelo.Detallefactura;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -48,8 +48,8 @@ public class DetallefacturaJpaController implements Serializable {
         if (detallefactura.getTicketList() == null) {
             detallefactura.setTicketList(new ArrayList<Ticket>());
         }
-        if (detallefactura.getSnackList() == null) {
-            detallefactura.setSnackList(new ArrayList<Snack>());
+        if (detallefactura.getCarritoList() == null) {
+            detallefactura.setCarritoList(new ArrayList<Carrito>());
         }
         EntityManager em = null;
         try {
@@ -67,38 +67,38 @@ public class DetallefacturaJpaController implements Serializable {
                 attachedTicketList.add(ticketListTicketToAttach);
             }
             detallefactura.setTicketList(attachedTicketList);
-            List<Snack> attachedSnackList = new ArrayList<Snack>();
-            for (Snack snackListSnackToAttach : detallefactura.getSnackList()) {
-                snackListSnackToAttach = em.getReference(snackListSnackToAttach.getClass(), snackListSnackToAttach.getIdSnack());
-                attachedSnackList.add(snackListSnackToAttach);
+            List<Carrito> attachedCarritoList = new ArrayList<Carrito>();
+            for (Carrito carritoListCarritoToAttach : detallefactura.getCarritoList()) {
+                carritoListCarritoToAttach = em.getReference(carritoListCarritoToAttach.getClass(), carritoListCarritoToAttach.getIdcarrito());
+                attachedCarritoList.add(carritoListCarritoToAttach);
             }
-            detallefactura.setSnackList(attachedSnackList);
+            detallefactura.setCarritoList(attachedCarritoList);
             em.persist(detallefactura);
             for (Factura facturaListFactura : detallefactura.getFacturaList()) {
-                Detallefactura oldIdDetalleFacturaOfFacturaListFactura = facturaListFactura.getIdDetalleFactura();
-                facturaListFactura.setIdDetalleFactura(detallefactura);
+                Detallefactura oldIdDetalleOfFacturaListFactura = facturaListFactura.getIdDetalle();
+                facturaListFactura.setIdDetalle(detallefactura);
                 facturaListFactura = em.merge(facturaListFactura);
-                if (oldIdDetalleFacturaOfFacturaListFactura != null) {
-                    oldIdDetalleFacturaOfFacturaListFactura.getFacturaList().remove(facturaListFactura);
-                    oldIdDetalleFacturaOfFacturaListFactura = em.merge(oldIdDetalleFacturaOfFacturaListFactura);
+                if (oldIdDetalleOfFacturaListFactura != null) {
+                    oldIdDetalleOfFacturaListFactura.getFacturaList().remove(facturaListFactura);
+                    oldIdDetalleOfFacturaListFactura = em.merge(oldIdDetalleOfFacturaListFactura);
                 }
             }
             for (Ticket ticketListTicket : detallefactura.getTicketList()) {
-                Detallefactura oldIdDetalleFacturaOfTicketListTicket = ticketListTicket.getIdDetalleFactura();
-                ticketListTicket.setIdDetalleFactura(detallefactura);
+                Detallefactura oldIdDetalleOfTicketListTicket = ticketListTicket.getIdDetalle();
+                ticketListTicket.setIdDetalle(detallefactura);
                 ticketListTicket = em.merge(ticketListTicket);
-                if (oldIdDetalleFacturaOfTicketListTicket != null) {
-                    oldIdDetalleFacturaOfTicketListTicket.getTicketList().remove(ticketListTicket);
-                    oldIdDetalleFacturaOfTicketListTicket = em.merge(oldIdDetalleFacturaOfTicketListTicket);
+                if (oldIdDetalleOfTicketListTicket != null) {
+                    oldIdDetalleOfTicketListTicket.getTicketList().remove(ticketListTicket);
+                    oldIdDetalleOfTicketListTicket = em.merge(oldIdDetalleOfTicketListTicket);
                 }
             }
-            for (Snack snackListSnack : detallefactura.getSnackList()) {
-                Detallefactura oldIdDetalleFacturaOfSnackListSnack = snackListSnack.getIdDetalleFactura();
-                snackListSnack.setIdDetalleFactura(detallefactura);
-                snackListSnack = em.merge(snackListSnack);
-                if (oldIdDetalleFacturaOfSnackListSnack != null) {
-                    oldIdDetalleFacturaOfSnackListSnack.getSnackList().remove(snackListSnack);
-                    oldIdDetalleFacturaOfSnackListSnack = em.merge(oldIdDetalleFacturaOfSnackListSnack);
+            for (Carrito carritoListCarrito : detallefactura.getCarritoList()) {
+                Detallefactura oldIdDetalleOfCarritoListCarrito = carritoListCarrito.getIdDetalle();
+                carritoListCarrito.setIdDetalle(detallefactura);
+                carritoListCarrito = em.merge(carritoListCarrito);
+                if (oldIdDetalleOfCarritoListCarrito != null) {
+                    oldIdDetalleOfCarritoListCarrito.getCarritoList().remove(carritoListCarrito);
+                    oldIdDetalleOfCarritoListCarrito = em.merge(oldIdDetalleOfCarritoListCarrito);
                 }
             }
             em.getTransaction().commit();
@@ -114,20 +114,20 @@ public class DetallefacturaJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Detallefactura persistentDetallefactura = em.find(Detallefactura.class, detallefactura.getIdDetalleFactura());
+            Detallefactura persistentDetallefactura = em.find(Detallefactura.class, detallefactura.getIdDetalle());
             List<Factura> facturaListOld = persistentDetallefactura.getFacturaList();
             List<Factura> facturaListNew = detallefactura.getFacturaList();
             List<Ticket> ticketListOld = persistentDetallefactura.getTicketList();
             List<Ticket> ticketListNew = detallefactura.getTicketList();
-            List<Snack> snackListOld = persistentDetallefactura.getSnackList();
-            List<Snack> snackListNew = detallefactura.getSnackList();
+            List<Carrito> carritoListOld = persistentDetallefactura.getCarritoList();
+            List<Carrito> carritoListNew = detallefactura.getCarritoList();
             List<String> illegalOrphanMessages = null;
             for (Factura facturaListOldFactura : facturaListOld) {
                 if (!facturaListNew.contains(facturaListOldFactura)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Factura " + facturaListOldFactura + " since its idDetalleFactura field is not nullable.");
+                    illegalOrphanMessages.add("You must retain Factura " + facturaListOldFactura + " since its idDetalle field is not nullable.");
                 }
             }
             for (Ticket ticketListOldTicket : ticketListOld) {
@@ -135,7 +135,15 @@ public class DetallefacturaJpaController implements Serializable {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Ticket " + ticketListOldTicket + " since its idDetalleFactura field is not nullable.");
+                    illegalOrphanMessages.add("You must retain Ticket " + ticketListOldTicket + " since its idDetalle field is not nullable.");
+                }
+            }
+            for (Carrito carritoListOldCarrito : carritoListOld) {
+                if (!carritoListNew.contains(carritoListOldCarrito)) {
+                    if (illegalOrphanMessages == null) {
+                        illegalOrphanMessages = new ArrayList<String>();
+                    }
+                    illegalOrphanMessages.add("You must retain Carrito " + carritoListOldCarrito + " since its idDetalle field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null) {
@@ -155,50 +163,44 @@ public class DetallefacturaJpaController implements Serializable {
             }
             ticketListNew = attachedTicketListNew;
             detallefactura.setTicketList(ticketListNew);
-            List<Snack> attachedSnackListNew = new ArrayList<Snack>();
-            for (Snack snackListNewSnackToAttach : snackListNew) {
-                snackListNewSnackToAttach = em.getReference(snackListNewSnackToAttach.getClass(), snackListNewSnackToAttach.getIdSnack());
-                attachedSnackListNew.add(snackListNewSnackToAttach);
+            List<Carrito> attachedCarritoListNew = new ArrayList<Carrito>();
+            for (Carrito carritoListNewCarritoToAttach : carritoListNew) {
+                carritoListNewCarritoToAttach = em.getReference(carritoListNewCarritoToAttach.getClass(), carritoListNewCarritoToAttach.getIdcarrito());
+                attachedCarritoListNew.add(carritoListNewCarritoToAttach);
             }
-            snackListNew = attachedSnackListNew;
-            detallefactura.setSnackList(snackListNew);
+            carritoListNew = attachedCarritoListNew;
+            detallefactura.setCarritoList(carritoListNew);
             detallefactura = em.merge(detallefactura);
             for (Factura facturaListNewFactura : facturaListNew) {
                 if (!facturaListOld.contains(facturaListNewFactura)) {
-                    Detallefactura oldIdDetalleFacturaOfFacturaListNewFactura = facturaListNewFactura.getIdDetalleFactura();
-                    facturaListNewFactura.setIdDetalleFactura(detallefactura);
+                    Detallefactura oldIdDetalleOfFacturaListNewFactura = facturaListNewFactura.getIdDetalle();
+                    facturaListNewFactura.setIdDetalle(detallefactura);
                     facturaListNewFactura = em.merge(facturaListNewFactura);
-                    if (oldIdDetalleFacturaOfFacturaListNewFactura != null && !oldIdDetalleFacturaOfFacturaListNewFactura.equals(detallefactura)) {
-                        oldIdDetalleFacturaOfFacturaListNewFactura.getFacturaList().remove(facturaListNewFactura);
-                        oldIdDetalleFacturaOfFacturaListNewFactura = em.merge(oldIdDetalleFacturaOfFacturaListNewFactura);
+                    if (oldIdDetalleOfFacturaListNewFactura != null && !oldIdDetalleOfFacturaListNewFactura.equals(detallefactura)) {
+                        oldIdDetalleOfFacturaListNewFactura.getFacturaList().remove(facturaListNewFactura);
+                        oldIdDetalleOfFacturaListNewFactura = em.merge(oldIdDetalleOfFacturaListNewFactura);
                     }
                 }
             }
             for (Ticket ticketListNewTicket : ticketListNew) {
                 if (!ticketListOld.contains(ticketListNewTicket)) {
-                    Detallefactura oldIdDetalleFacturaOfTicketListNewTicket = ticketListNewTicket.getIdDetalleFactura();
-                    ticketListNewTicket.setIdDetalleFactura(detallefactura);
+                    Detallefactura oldIdDetalleOfTicketListNewTicket = ticketListNewTicket.getIdDetalle();
+                    ticketListNewTicket.setIdDetalle(detallefactura);
                     ticketListNewTicket = em.merge(ticketListNewTicket);
-                    if (oldIdDetalleFacturaOfTicketListNewTicket != null && !oldIdDetalleFacturaOfTicketListNewTicket.equals(detallefactura)) {
-                        oldIdDetalleFacturaOfTicketListNewTicket.getTicketList().remove(ticketListNewTicket);
-                        oldIdDetalleFacturaOfTicketListNewTicket = em.merge(oldIdDetalleFacturaOfTicketListNewTicket);
+                    if (oldIdDetalleOfTicketListNewTicket != null && !oldIdDetalleOfTicketListNewTicket.equals(detallefactura)) {
+                        oldIdDetalleOfTicketListNewTicket.getTicketList().remove(ticketListNewTicket);
+                        oldIdDetalleOfTicketListNewTicket = em.merge(oldIdDetalleOfTicketListNewTicket);
                     }
                 }
             }
-            for (Snack snackListOldSnack : snackListOld) {
-                if (!snackListNew.contains(snackListOldSnack)) {
-                    snackListOldSnack.setIdDetalleFactura(null);
-                    snackListOldSnack = em.merge(snackListOldSnack);
-                }
-            }
-            for (Snack snackListNewSnack : snackListNew) {
-                if (!snackListOld.contains(snackListNewSnack)) {
-                    Detallefactura oldIdDetalleFacturaOfSnackListNewSnack = snackListNewSnack.getIdDetalleFactura();
-                    snackListNewSnack.setIdDetalleFactura(detallefactura);
-                    snackListNewSnack = em.merge(snackListNewSnack);
-                    if (oldIdDetalleFacturaOfSnackListNewSnack != null && !oldIdDetalleFacturaOfSnackListNewSnack.equals(detallefactura)) {
-                        oldIdDetalleFacturaOfSnackListNewSnack.getSnackList().remove(snackListNewSnack);
-                        oldIdDetalleFacturaOfSnackListNewSnack = em.merge(oldIdDetalleFacturaOfSnackListNewSnack);
+            for (Carrito carritoListNewCarrito : carritoListNew) {
+                if (!carritoListOld.contains(carritoListNewCarrito)) {
+                    Detallefactura oldIdDetalleOfCarritoListNewCarrito = carritoListNewCarrito.getIdDetalle();
+                    carritoListNewCarrito.setIdDetalle(detallefactura);
+                    carritoListNewCarrito = em.merge(carritoListNewCarrito);
+                    if (oldIdDetalleOfCarritoListNewCarrito != null && !oldIdDetalleOfCarritoListNewCarrito.equals(detallefactura)) {
+                        oldIdDetalleOfCarritoListNewCarrito.getCarritoList().remove(carritoListNewCarrito);
+                        oldIdDetalleOfCarritoListNewCarrito = em.merge(oldIdDetalleOfCarritoListNewCarrito);
                     }
                 }
             }
@@ -206,7 +208,7 @@ public class DetallefacturaJpaController implements Serializable {
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                Integer id = detallefactura.getIdDetalleFactura();
+                Integer id = detallefactura.getIdDetalle();
                 if (findDetallefactura(id) == null) {
                     throw new NonexistentEntityException("The detallefactura with id " + id + " no longer exists.");
                 }
@@ -227,7 +229,7 @@ public class DetallefacturaJpaController implements Serializable {
             Detallefactura detallefactura;
             try {
                 detallefactura = em.getReference(Detallefactura.class, id);
-                detallefactura.getIdDetalleFactura();
+                detallefactura.getIdDetalle();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The detallefactura with id " + id + " no longer exists.", enfe);
             }
@@ -237,22 +239,24 @@ public class DetallefacturaJpaController implements Serializable {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Detallefactura (" + detallefactura + ") cannot be destroyed since the Factura " + facturaListOrphanCheckFactura + " in its facturaList field has a non-nullable idDetalleFactura field.");
+                illegalOrphanMessages.add("This Detallefactura (" + detallefactura + ") cannot be destroyed since the Factura " + facturaListOrphanCheckFactura + " in its facturaList field has a non-nullable idDetalle field.");
             }
             List<Ticket> ticketListOrphanCheck = detallefactura.getTicketList();
             for (Ticket ticketListOrphanCheckTicket : ticketListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Detallefactura (" + detallefactura + ") cannot be destroyed since the Ticket " + ticketListOrphanCheckTicket + " in its ticketList field has a non-nullable idDetalleFactura field.");
+                illegalOrphanMessages.add("This Detallefactura (" + detallefactura + ") cannot be destroyed since the Ticket " + ticketListOrphanCheckTicket + " in its ticketList field has a non-nullable idDetalle field.");
+            }
+            List<Carrito> carritoListOrphanCheck = detallefactura.getCarritoList();
+            for (Carrito carritoListOrphanCheckCarrito : carritoListOrphanCheck) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("This Detallefactura (" + detallefactura + ") cannot be destroyed since the Carrito " + carritoListOrphanCheckCarrito + " in its carritoList field has a non-nullable idDetalle field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
-            }
-            List<Snack> snackList = detallefactura.getSnackList();
-            for (Snack snackListSnack : snackList) {
-                snackListSnack.setIdDetalleFactura(null);
-                snackListSnack = em.merge(snackListSnack);
             }
             em.remove(detallefactura);
             em.getTransaction().commit();

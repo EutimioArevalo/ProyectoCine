@@ -43,10 +43,10 @@ public class FacturaJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Detallefactura idDetalleFactura = factura.getIdDetalleFactura();
-            if (idDetalleFactura != null) {
-                idDetalleFactura = em.getReference(idDetalleFactura.getClass(), idDetalleFactura.getIdDetalleFactura());
-                factura.setIdDetalleFactura(idDetalleFactura);
+            Detallefactura idDetalle = factura.getIdDetalle();
+            if (idDetalle != null) {
+                idDetalle = em.getReference(idDetalle.getClass(), idDetalle.getIdDetalle());
+                factura.setIdDetalle(idDetalle);
             }
             Persona persona = factura.getPersona();
             if (persona != null) {
@@ -54,9 +54,9 @@ public class FacturaJpaController implements Serializable {
                 factura.setPersona(persona);
             }
             em.persist(factura);
-            if (idDetalleFactura != null) {
-                idDetalleFactura.getFacturaList().add(factura);
-                idDetalleFactura = em.merge(idDetalleFactura);
+            if (idDetalle != null) {
+                idDetalle.getFacturaList().add(factura);
+                idDetalle = em.merge(idDetalle);
             }
             if (persona != null) {
                 persona.getFacturaList().add(factura);
@@ -76,26 +76,26 @@ public class FacturaJpaController implements Serializable {
             em = getEntityManager();
             em.getTransaction().begin();
             Factura persistentFactura = em.find(Factura.class, factura.getIdFactura());
-            Detallefactura idDetalleFacturaOld = persistentFactura.getIdDetalleFactura();
-            Detallefactura idDetalleFacturaNew = factura.getIdDetalleFactura();
+            Detallefactura idDetalleOld = persistentFactura.getIdDetalle();
+            Detallefactura idDetalleNew = factura.getIdDetalle();
             Persona personaOld = persistentFactura.getPersona();
             Persona personaNew = factura.getPersona();
-            if (idDetalleFacturaNew != null) {
-                idDetalleFacturaNew = em.getReference(idDetalleFacturaNew.getClass(), idDetalleFacturaNew.getIdDetalleFactura());
-                factura.setIdDetalleFactura(idDetalleFacturaNew);
+            if (idDetalleNew != null) {
+                idDetalleNew = em.getReference(idDetalleNew.getClass(), idDetalleNew.getIdDetalle());
+                factura.setIdDetalle(idDetalleNew);
             }
             if (personaNew != null) {
                 personaNew = em.getReference(personaNew.getClass(), personaNew.getIdPersona());
                 factura.setPersona(personaNew);
             }
             factura = em.merge(factura);
-            if (idDetalleFacturaOld != null && !idDetalleFacturaOld.equals(idDetalleFacturaNew)) {
-                idDetalleFacturaOld.getFacturaList().remove(factura);
-                idDetalleFacturaOld = em.merge(idDetalleFacturaOld);
+            if (idDetalleOld != null && !idDetalleOld.equals(idDetalleNew)) {
+                idDetalleOld.getFacturaList().remove(factura);
+                idDetalleOld = em.merge(idDetalleOld);
             }
-            if (idDetalleFacturaNew != null && !idDetalleFacturaNew.equals(idDetalleFacturaOld)) {
-                idDetalleFacturaNew.getFacturaList().add(factura);
-                idDetalleFacturaNew = em.merge(idDetalleFacturaNew);
+            if (idDetalleNew != null && !idDetalleNew.equals(idDetalleOld)) {
+                idDetalleNew.getFacturaList().add(factura);
+                idDetalleNew = em.merge(idDetalleNew);
             }
             if (personaOld != null && !personaOld.equals(personaNew)) {
                 personaOld.getFacturaList().remove(factura);
@@ -134,10 +134,10 @@ public class FacturaJpaController implements Serializable {
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The factura with id " + id + " no longer exists.", enfe);
             }
-            Detallefactura idDetalleFactura = factura.getIdDetalleFactura();
-            if (idDetalleFactura != null) {
-                idDetalleFactura.getFacturaList().remove(factura);
-                idDetalleFactura = em.merge(idDetalleFactura);
+            Detallefactura idDetalle = factura.getIdDetalle();
+            if (idDetalle != null) {
+                idDetalle.getFacturaList().remove(factura);
+                idDetalle = em.merge(idDetalle);
             }
             Persona persona = factura.getPersona();
             if (persona != null) {

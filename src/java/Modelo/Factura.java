@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,7 +19,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
@@ -26,43 +26,38 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "factura")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Factura.findAll", query = "SELECT f FROM Factura f"),
     @NamedQuery(name = "Factura.findByIdFactura", query = "SELECT f FROM Factura f WHERE f.idFactura = :idFactura"),
     @NamedQuery(name = "Factura.findByNroFactura", query = "SELECT f FROM Factura f WHERE f.nroFactura = :nroFactura"),
     @NamedQuery(name = "Factura.findByTotal", query = "SELECT f FROM Factura f WHERE f.total = :total"),
-    @NamedQuery(name = "Factura.findBySubtotal", query = "SELECT f FROM Factura f WHERE f.subtotal = :subtotal"),
-    @NamedQuery(name = "Factura.findByPersonaRolidRol", query = "SELECT f FROM Factura f WHERE f.personaRolidRol = :personaRolidRol")})
+    @NamedQuery(name = "Factura.findByCliente", query = "SELECT f FROM Factura f WHERE f.cliente = :cliente")})
 public class Factura implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_factura")
+    @Column(name = "idFactura", nullable = false)
     private Integer idFactura;
     @Basic(optional = false)
-    @Column(name = "nroFactura")
-    private int nroFactura;
+    @Column(name = "nroFactura", nullable = false, length = 50)
+    private String nroFactura;
     @Basic(optional = false)
-    @Column(name = "total")
+    @Column(name = "total", nullable = false)
     private float total;
     @Basic(optional = false)
-    @Column(name = "subtotal")
-    private float subtotal;
-    @Basic(optional = false)
-    @Column(name = "persona_Rol_id_Rol")
-    private int personaRolidRol;
-    @JoinColumn(name = "id_DetalleFactura", referencedColumnName = "id_DetalleFactura")
-    @ManyToOne(optional = false)
-    private Detallefactura idDetalleFactura;
+    @Column(name = "cliente", nullable = false, length = 100)
+    private String cliente;
+    @JoinColumn(name = "idDetalle", referencedColumnName = "idDetalle", nullable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Detallefactura idDetalle;
     @JoinColumns({
-        @JoinColumn(name = "id_Persona", referencedColumnName = "id_Persona"),
-        @JoinColumn(name = "id_Persona", referencedColumnName = "id_Persona"),
-        @JoinColumn(name = "id_Persona", referencedColumnName = "id_Persona"),
-        @JoinColumn(name = "id_Persona", referencedColumnName = "id_Persona")})
-    @ManyToOne(optional = false)
+        @JoinColumn(name = "idPersona", referencedColumnName = "idPersona", nullable = false),
+        @JoinColumn(name = "idPersona", referencedColumnName = "idPersona", nullable = false),
+        @JoinColumn(name = "idPersona", referencedColumnName = "idPersona", nullable = false),
+        @JoinColumn(name = "idPersona", referencedColumnName = "idPersona", nullable = false)})
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Persona persona;
 
     public Factura() {
@@ -72,12 +67,11 @@ public class Factura implements Serializable {
         this.idFactura = idFactura;
     }
 
-    public Factura(Integer idFactura, int nroFactura, float total, float subtotal, int personaRolidRol) {
+    public Factura(Integer idFactura, String nroFactura, float total, String cliente) {
         this.idFactura = idFactura;
         this.nroFactura = nroFactura;
         this.total = total;
-        this.subtotal = subtotal;
-        this.personaRolidRol = personaRolidRol;
+        this.cliente = cliente;
     }
 
     public Integer getIdFactura() {
@@ -88,11 +82,11 @@ public class Factura implements Serializable {
         this.idFactura = idFactura;
     }
 
-    public int getNroFactura() {
+    public String getNroFactura() {
         return nroFactura;
     }
 
-    public void setNroFactura(int nroFactura) {
+    public void setNroFactura(String nroFactura) {
         this.nroFactura = nroFactura;
     }
 
@@ -104,28 +98,20 @@ public class Factura implements Serializable {
         this.total = total;
     }
 
-    public float getSubtotal() {
-        return subtotal;
+    public String getCliente() {
+        return cliente;
     }
 
-    public void setSubtotal(float subtotal) {
-        this.subtotal = subtotal;
+    public void setCliente(String cliente) {
+        this.cliente = cliente;
     }
 
-    public int getPersonaRolidRol() {
-        return personaRolidRol;
+    public Detallefactura getIdDetalle() {
+        return idDetalle;
     }
 
-    public void setPersonaRolidRol(int personaRolidRol) {
-        this.personaRolidRol = personaRolidRol;
-    }
-
-    public Detallefactura getIdDetalleFactura() {
-        return idDetalleFactura;
-    }
-
-    public void setIdDetalleFactura(Detallefactura idDetalleFactura) {
-        this.idDetalleFactura = idDetalleFactura;
+    public void setIdDetalle(Detallefactura idDetalle) {
+        this.idDetalle = idDetalle;
     }
 
     public Persona getPersona() {

@@ -22,6 +22,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Document</title>
+        <link rel="shortcut icon" href="https://res.cloudinary.com/djsa7v6bs/image/upload/v1629058563/boleto_p5b5s5.png">
         <!--FONT OSWALD-->
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400&display=swap" rel="stylesheet">
@@ -29,13 +30,13 @@
         <link rel="stylesheet" href="registrar.css">
     </head>
     <%
+        HttpSession sesion = request.getSession();
+
         PersonaDAO p = new PersonaDAO();
         CuentaDAO c = new CuentaDAO();
         CuentaJpaController cjc = new CuentaJpaController();
         PersonaJpaController pjc = new PersonaJpaController();
         RolJpaController r = new RolJpaController();
-
-        HttpSession sesion = request.getSession();
 
         String idCuenta = "";
         String idRol = "";
@@ -52,7 +53,7 @@
             idRol = sesion.getAttribute("idRol").toString();
         }
 
-        if (request.getParameter("btnEnviar") != null && sesion.getAttribute("idCuenta") == null) {
+        if (request.getParameter("btnAgregar") != null) {
             String nombres = request.getParameter("txtNombres");
             String apellidos = request.getParameter("txtApellidos");
             String cedula = request.getParameter("txtCedula");
@@ -61,13 +62,16 @@
             try {
                 p.crear(nombres, apellidos, cedula, email, telefono, r.findRol(3));
                 c.crear(cedula);
-                sesion.setAttribute("idCuenta", c.buscarPorCedula(cedula));
-                sesion.setAttribute("idRol", r.findRol(3).getIdRol());
+               // sesion.setAttribute("idCuenta", c.buscarPorCedula(cedula));
+               // sesion.setAttribute("idRol", r.findRol(3).getIdRol());
+                out.print("<script>alert('Su usuario es el email que ingreso y su clave es su cedula. Puede modificarlas cuando desee');</script>");
                 response.sendRedirect("../../index.jsp");
             } catch (Exception e) {
-                out.print("<script>alert('Error al momento de ingresar datos');</script>");;
+                out.print("<script>alert('Error al momento de ingresar datos');</script>");
             }
-        } else if (request.getParameter("btnEnviar") != null && sesion.getAttribute("idCuenta") != null) {
+        }
+
+        if (request.getParameter("btnEditar") != null) {
             String usuario = request.getParameter("txtUsuario");
             String clave = request.getParameter("txtClave");
             try {
@@ -83,10 +87,10 @@
     <body>
 
         <div class="container">
-            <nav class="nav"><img src="https://www.pngkit.com/png/full/786-7863517_para-cine-logo-de-cine-colombia-png.png" alt="Cine Logo" class="logo">
+            <%if (idRol != null) {%>
+            <nav class="nav"><img src="https://res.cloudinary.com/djsa7v6bs/image/upload/v1629058563/boleto_p5b5s5.png" alt="Cine Logo" class="logo">
                 <ul class="nav-menu">
-                    <%if (Integer.valueOf(idRol)
-                                == 3) {
+                    <%if (Integer.valueOf(idRol) == 3) {
                     %>
                     <li>
                         <a href="../../index.jsp">Regresar</a>
@@ -114,10 +118,9 @@
             </nav>
 
             <hr>
-
+            <%}%>
             <div class="divFor">
-                <p><%=idCuenta%></p>
-                <p><%=idRol%></p>
+
 
                 <form id="form" action="Pag_Registrarse.jsp" method="POST">
 
@@ -130,17 +133,17 @@
                     <p>Cedula: <input type="number" name="txtCedula" "></p>
                     <p>Telefono: <input type="tel" name="txtTelefono" ></p>
                     <p>Email: <input type="email" name="txtEmail"></p>
-
+                    <input type="submit" name="btnAgregar" value="Aceptar">
                     <%
                     } else {
                     %>
 
-                    <p>Usuario Actual: <input type="text" name="txtUsuario" value="<%=c.buscarCuentaId(Integer.valueOf(idCuenta)).getUsuario()%>"></p>
-                    <p>Clave Actual:  <input type="text" name="txtClave" value="<%=c.buscarCuentaId(Integer.valueOf(idCuenta)).getClave()%>"></p>
-
+                    <p>Usuario: <input type="text" name="txtUsuario" value="<%=c.buscarCuentaId(Integer.valueOf(idCuenta)).getUsuario()%>"></p>
+                    <p>Clave:  <input type="text" name="txtClave" value="<%=c.buscarCuentaId(Integer.valueOf(idCuenta)).getClave()%>"></p>
+                    <input type="submit" name="btnEditar" value="Aceptar">
 
                     <%}%>
-                    <input type="submit" name="btnEnviar" value="Aceptar">
+
 
                 </form>
 

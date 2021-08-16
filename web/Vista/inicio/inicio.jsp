@@ -5,14 +5,15 @@
 --%>
 
 <%@page import="Controlador.DAO.CuentaDAO"%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="UTF-8">
+        <meta charset="ISO-8859-1">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Menu Inicio</title>
+        <link rel="shortcut icon" href="https://res.cloudinary.com/djsa7v6bs/image/upload/v1629058563/boleto_p5b5s5.png">
         <!--FONT AWESOME-->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
         <!--FONT OSWALD-->
@@ -26,12 +27,30 @@
     <%
 
         HttpSession sesion = request.getSession();
-        String usuario = sesion.getAttribute("usuario").toString();
-        String id = sesion.getAttribute("id").toString();
         CuentaDAO c = new CuentaDAO();
 
+        String idCuenta = "";
+        if (sesion.getAttribute("idCuenta") == null) {
+            idCuenta = null;
+        } else {
+            idCuenta = sesion.getAttribute("idCuenta").toString();
+        }
+
+        String idRol = "";
+        if (sesion.getAttribute("idRol") == null) {
+            idRol = null;
+        } else {
+            idRol = sesion.getAttribute("idRol").toString();
+        }
+        
         if (request.getParameter("btnCerrarSes") != null) {
-            
+            sesion.setAttribute("idCuenta", null);
+            sesion.setAttribute("idRol", null);
+            response.sendRedirect("../../index.jsp");
+        }
+        
+if(request.getParameter("btnRegistro") != null){
+response.sendRedirect("registro.jsp");
         }
 
     %>
@@ -39,9 +58,9 @@
     <body>
         <div class="container">
             <nav class="nav-main">
-                <img src="https://www.pngkit.com/png/full/786-7863517_para-cine-logo-de-cine-colombia-png.png" alt="Cine LOGO" class="logo">
+                <img src="https://res.cloudinary.com/djsa7v6bs/image/upload/v1629058563/boleto_p5b5s5.png" alt="Cine LOGO" class="logo">
                 <ul class="nav-menu">
-                    <%                        if (c.buscarROl(sesion.getAttribute("usuario").toString()) == 2) {
+                    <%                        if (Integer.valueOf(idRol) == 2) {
 
                     %>
                     <li>
@@ -49,11 +68,11 @@
                     </li>
 
                     <li>
-                        <a href="../registrarse/Pag_Registrarse.jsp">Modificar InformaciÃ³n</a>
+                        <a href="../registrarse/Pag_Registrarse.jsp">Modificar Información</a>
                     </li>
 
                     <li>
-                        <a href="../comprarTicket/comprarTicket.jsp">Vender Ticket</a>
+                        <a href="../comprarTicket/seleccionarPelicula.jsp">Vender Ticket</a>
                     </li>
 
                     <%} else {%>
@@ -61,7 +80,7 @@
                         <a href="../inicio/inicio.jsp">Inicio</a>
                     </li>
                     <li>
-                        <a href="../ModificarCartelera/ModificarCartelera.jsp">Modificar Carteleras</a>
+                        <a href="../ListaCarteleras/ListaCarteleras.jsp">Modificar Carteleras</a>
                     </li>
                     <li>
                         <a href="../adminPeliculas/adminPeliculas.jsp">Administrar Peliculas</a>
@@ -73,10 +92,10 @@
                         <a href="../adminsalas/adminsala.jsp">Gestionar Sala</a>
                     </li>
                     <li>
-                        <a href="../comprarTicket/comprarTicket.jsp">Vender Ticket</a>
+                        <a href="../comprarTicket/seleccionarPelicula.jsp">Vender Ticket</a>
                     </li>
                     <li>
-                        <a href="../registrarse/Pag_Registrarse.jsp">Modificar InformaciÃ³n</a>
+                        <a href="../registrarse/Pag_Registrarse.jsp">Modificar Información</a>
                     </li>
                     <li>
                         <a href="../adminsnacks/adminsnacks.jsp">Administrar Snacks</a>
@@ -89,9 +108,10 @@
 
             <div>
                 <center>
-                    <h1>Bienvendido <%=usuario%></h1>
+                    <h1>Bienvendido <%=c.buscarCuentaId(Integer.valueOf(idCuenta)).getUsuario()%></h1>
                     <form>
-                        <p>CERRAR SESION: <input type="submit" name="btnCerrarSes" value="Cerrar SesiÃ³n"></p>
+                        <p>CERRAR SESION: <input type="submit" name="btnCerrarSes" value="Cerrar Sesión"></p>
+                        <p>VER REGISTRO DE VENTAS: <input type="submit" name="btnRegistro" value="Registro de Ventas"></p>
                     </form>
                 </center>
 

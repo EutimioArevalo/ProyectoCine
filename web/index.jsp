@@ -4,6 +4,10 @@
     Author     : timoa
 --%>
 
+<%@page import="java.util.Set"%>
+<%@page import="java.util.HashSet"%>
+<%@page import="Modelo.Cartelera"%>
+<%@page import="java.util.ArrayList"%>
 <%@page import="Controlador.DAO.PeliculaDAO"%>
 <%@page import="Controlador.JPA.SnackJpaController"%>
 <%@page import="Modelo.Snack"%>
@@ -15,7 +19,7 @@
 <%@page import="Controlador.JPA.CuentaJpaController"%>
 <%@page import="Modelo.Cuenta"%>
 <%@page import="Controlador.DAO.CuentaDAO"%>
-<%@page contentType="text/html; charset=ISO-8859-1" %>
+<%@page contentType="text/html" pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -23,7 +27,8 @@
         <meta charset="ISO-8859-1">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Cine</title>     
+        <title>Cine</title> 
+        <link rel="shortcut icon" href="https://res.cloudinary.com/djsa7v6bs/image/upload/v1629058563/boleto_p5b5s5.png">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
         <!--FONT OSWALD-->
         <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -32,7 +37,15 @@
         <link rel="stylesheet" href="styles.css">
     </head>
     <%
+
         HttpSession sesion = request.getSession(false);
+        if (sesion.getAttribute("idRol") != null) {
+
+            if (Integer.valueOf(sesion.getAttribute("idRol").toString()) != 3) {
+                response.sendRedirect("Vista/inicio/inicio.jsp");
+            }
+
+        }
 
         CuentaDAO c = new CuentaDAO();
         CarteleraDAO car = new CarteleraDAO();
@@ -42,15 +55,35 @@
         PeliculaJpaController peliculaJPA = new PeliculaJpaController();
         SnackJpaController snackJPA = new SnackJpaController();
 
-        int cont = 0;
-        int aux = peliculaJPA.findPeliculaEntities().size();
+        List<Integer> Peliaux = new ArrayList<>();
 
-        List<Cuenta> list = cjc.findCuentaEntities();
+        String idCuenta = "";
+        if (sesion.getAttribute("idCuenta") == null) {
+            idCuenta = null;
+        } else {
+            idCuenta = sesion.getAttribute("idCuenta").toString();
+        }
+
+        String idRol = "";
+        if (sesion.getAttribute("idRol") == null) {
+            idRol = null;
+        } else {
+            idRol = sesion.getAttribute("idRol").toString();
+        }
+
+        for (Cartelera ca : cajc.findCarteleraEntities()) {
+            Peliaux.add(ca.getIdPelicula().getIdPelicula());
+        }
+
+        Set<Integer> hash = new HashSet<>(Peliaux);
+        List<Integer> Paux = new ArrayList<>(hash);
+
+        int cont = 0;
 
         if (request.getParameter("btnLogin") != null) {
             String usuario = request.getParameter("txtUsuario").toString();
             String clave = request.getParameter("txtClave").toString();
-
+            System.out.println(usuario + clave);
             if (c.verificarLogin(usuario, clave)) {
 
                 sesion.setAttribute("idCuenta", c.buscarIDCuenta(usuario));
@@ -84,16 +117,23 @@
             sesion.setAttribute("idRol", null);
             response.sendRedirect("index.jsp");
         }
+        
+        if (request.getParameter("btnRegistro") != null) {
+            response.sendRedirect("Vista/inicio/registro.jsp");
+        }
 
-        for (int i = 0; i < aux; i++) {
-            if (request.getParameter("btnMasInformacion" + i) != null) {
-                sesion.setAttribute("idPelicula", peliculaJPA.findPeliculaEntities().get(i).getIdPelicula());
+        for (Integer p : Paux) {
+            if (request.getParameter("btnMasInformacion" + p) != null) {
+                sesion.setAttribute("idPelicula", p);
+                sesion.setAttribute("listaCartelera", car.obtenerPorPelicula(p));
                 if (sesion.getAttribute("idCuenta") == null) {
                     sesion.setAttribute("idCuenta", null);
                 }
                 response.sendRedirect("Vista/informacionPelicula/Pag_InfoPeli.jsp");
             }
         }
+        
+        
 
     %>
 
@@ -102,7 +142,7 @@
         <div class="container">
             <nav class="nav">  
                 <ul class="nav-menu">
-                    <img src="https://www.pngkit.com/png/full/786-7863517_para-cine-logo-de-cine-colombia-png.png" alt="Cine Logo" class="logo">
+                    <img src="https://res.cloudinary.com/djsa7v6bs/image/upload/v1629058563/boleto_p5b5s5.png" alt="Cine Logo" class="logo">
 
 
 
@@ -125,6 +165,7 @@
                         <li>
                             <input type ="submit" name="btnRegistrar" value="Registrarse">
                         </li>
+                        
                         <%} else {%>
 
                         <li>
@@ -133,6 +174,9 @@
 
                         <li>
                             <input type ="submit" name="btnCerrarSesion" value="Cerrar Sesión">
+                        </li>
+                        <li>
+                            <input type ="submit" name="btnRegistro" value="Ver Historia de Compra">
                         </li>
                         <%}%>
                     </form>
@@ -157,18 +201,18 @@
             <div id="peliculas">
 
                 <%
-                    for (Pelicula p : peliculaJPA.findPeliculaEntities()) {
+                    for (Integer p : Paux) {
                 %>
 
                 <div id="tarjeta">
                     <div id="portada">
-                        <img src=<%=p.getPortada()%> alt="peli1">
+                        <img src=<%=pDAO.buscar(p).getPortada()%> alt="peli1">
                     </div>
                     <div id="infoPeli">
-                        <h2><%=p.getTitulo()%></h2>
-                        <p><%=p.getSipnosis()%></p>
+                        <h2><%=pDAO.buscar(p).getTitulo()%></h2>
+                        <p><%=pDAO.buscar(p).getSipnosis()%></p>
                         <form action="index.jsp" method="POST">
-                            <input type ="submit" name="btnMasInformacion<%=cont%>" value="Más Información">
+                            <input type ="submit" name="btnMasInformacion<%=p%>" value="Más Información">
                         </form>
                     </div>
                 </div>

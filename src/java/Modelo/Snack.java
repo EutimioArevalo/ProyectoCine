@@ -6,26 +6,28 @@
 package Modelo;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.persistence.UniqueConstraint;
 
 /**
  *
  * @author timoa
  */
 @Entity
-@Table(name = "snack")
-@XmlRootElement
+@Table(name = "snack", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"nombre"})})
 @NamedQueries({
     @NamedQuery(name = "Snack.findAll", query = "SELECT s FROM Snack s"),
     @NamedQuery(name = "Snack.findByIdSnack", query = "SELECT s FROM Snack s WHERE s.idSnack = :idSnack"),
@@ -39,23 +41,22 @@ public class Snack implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_Snack")
+    @Column(name = "idSnack", nullable = false)
     private Integer idSnack;
     @Basic(optional = false)
-    @Column(name = "nombre")
+    @Column(name = "nombre", nullable = false, length = 45)
     private String nombre;
     @Basic(optional = false)
-    @Column(name = "descripcion")
+    @Column(name = "descripcion", nullable = false, length = 1000)
     private String descripcion;
     @Basic(optional = false)
-    @Column(name = "precio")
+    @Column(name = "precio", nullable = false)
     private float precio;
     @Basic(optional = false)
-    @Column(name = "img")
+    @Column(name = "img", nullable = false, length = 500)
     private String img;
-    @JoinColumn(name = "id_DetalleFactura", referencedColumnName = "id_DetalleFactura")
-    @ManyToOne
-    private Detallefactura idDetalleFactura;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "snack", fetch = FetchType.LAZY)
+    private List<Carrito> carritoList;
 
     public Snack() {
     }
@@ -112,12 +113,12 @@ public class Snack implements Serializable {
         this.img = img;
     }
 
-    public Detallefactura getIdDetalleFactura() {
-        return idDetalleFactura;
+    public List<Carrito> getCarritoList() {
+        return carritoList;
     }
 
-    public void setIdDetalleFactura(Detallefactura idDetalleFactura) {
-        this.idDetalleFactura = idDetalleFactura;
+    public void setCarritoList(List<Carrito> carritoList) {
+        this.carritoList = carritoList;
     }
 
     @Override

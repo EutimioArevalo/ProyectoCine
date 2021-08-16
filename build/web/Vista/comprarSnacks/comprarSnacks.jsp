@@ -4,15 +4,17 @@
     Author     : timoa
 --%>
 
+<%@page import="java.util.ArrayList"%>
+<%@page import="java.util.List"%>
 <%@page import="Modelo.Snack"%>
 <%@page import="Controlador.JPA.SnackJpaController"%>
 <%@page import="Controlador.DAO.SnackDAO"%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
 <html lang="en">
 
     <head>
-        <meta charset="UTF-8">
+        <meta charset="ISO-8859-1">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- incluir boostrap -->
@@ -25,6 +27,7 @@
         <link rel="stylesheet" href="../../styles.css">
         <link rel="stylesheet" href="comprarSnacks.css">
         <title>Comprar Snacks</title>
+        <link rel="shortcut icon" href="https://res.cloudinary.com/djsa7v6bs/image/upload/v1629058563/boleto_p5b5s5.png">
     </head>
     <%
 
@@ -40,11 +43,29 @@
             idCuenta = sesion.getAttribute("idCuenta").toString();
         }
         String idPelicula = sesion.getAttribute("idPelicula").toString();
+        String idCartelera = sesion.getAttribute("idCartelera").toString();
+        List<Integer> listaAsientos = (List<Integer>) sesion.getAttribute("listaAsientos");
+        List<Integer> intSnack = new ArrayList<>();
+        //System.out.println(listaAsientos);
+
         String idRol = "";
         if (sesion.getAttribute("idRol") == null) {
             idRol = null;
         } else {
             idRol = sesion.getAttribute("idRol").toString();
+        }
+
+        if (request.getParameter("btnSeleccionar") != null) {
+            for (int i = 0; i < njc.findSnackEntities().size(); i++) {
+                if (request.getParameter("num" + i) != null) {
+                    intSnack.add(Integer.valueOf(request.getParameter("num" + i).toString()));
+                } else {
+                    intSnack.add(0);
+                }
+                
+            }
+            sesion.setAttribute("listaSnacks", intSnack);
+            response.sendRedirect("../comprarTicket/comprarTicket.jsp");
         }
 
     %>
@@ -55,31 +76,39 @@
             </div>
 
             <hr><!-- comment -->
-            <p><%=idCuenta%></p>
-            <p><%=idPelicula%></p>
-            <p><%=idRol%></p>
+
             <div class="list-group lista">
-                <%                    for (Snack s : njc.findSnackEntities()) {
-                %>
-                <div class="list-group-item item_container">
-                    <div class="row row_item">
-                        <div class="col-md-1">
-                            <form action="comprarSnacks.jsp" method="POST">
-                                <input class="form-check-input" type="number" min="0" value="" id="combo1">
-                            </form>  
-                        </div>
-                        <div class="col-md-4">
-                            <h5><%=s.getNombre() + ": " + s.getDescripcion()%></h5>
-                        </div>
-                        <div class="col-md-4 imagenCombo">
-                            <img src=<%=s.getImg()%> alt="combo" height="100" width="150">
-                        </div>
-                        <div class="col precio">
-                            <%=s.getPrecio()%>
+                <form action="comprarSnacks.jsp" method="POST">
+
+                    <%
+                        int cont = 0;
+                        for (Snack s : njc.findSnackEntities()) {
+                    %>
+                    <div class="list-group-item item_container">
+                        <div class="row row_item">
+
+                            <div class="col-md-1">
+
+                                <input class="form-check-input" type="number" min="0" value="0" id="combo1" name="num<%=cont%>">
+
+                            </div>
+                            <div class="col-md-4">
+                                <h5><%=s.getNombre() + ": " + s.getDescripcion()%></h5>
+                            </div>
+                            <div class="col-md-4 imagenCombo">
+                                <img src=<%=s.getImg()%> alt="combo" height="100" width="150">
+                            </div>
+                            <div class="col precio">
+                                <%=s.getPrecio()%>
+                            </div>
+
                         </div>
                     </div>
-                </div>
-                <%}%>
+                    <%cont++;
+                        }%>
+                    <input type="submit" name="btnSeleccionar" value="Aceptar">                            
+                </form>  
+
             </div>
             <!-- boton  -->
             <div class="row container_button">

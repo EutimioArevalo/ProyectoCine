@@ -3,18 +3,19 @@
   <persistence-unit name="ProyectoCineWEBPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <class>Modelo.Cuenta</class>
-    <class>Modelo.Factura</class>
-    <class>Modelo.Ticket</class>
-    <class>Modelo.Cartelera</class>
-    <class>Modelo.Rol</class>
     <class>Modelo.Detallefactura</class>
+    <class>Modelo.Factura</class>
     <class>Modelo.Sala</class>
-    <class>Modelo.Pelicula</class>
     <class>Modelo.Persona</class>
+    <class>Modelo.Pelicula</class>
+    <class>Modelo.Rol</class>
     <class>Modelo.Snack</class>
+    <class>Modelo.Cartelera</class>
+    <class>Modelo.Ticket</class>
+    <class>Modelo.Carrito</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
-      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/proyectofinalcine?zeroDateTimeBehavior=CONVERT_TO_NULL"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/cineweb?zeroDateTimeBehavior=CONVERT_TO_NULL"/>
       <property name="javax.persistence.jdbc.user" value="root"/>
       <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
       <property name="javax.persistence.jdbc.password" value="Basededatos2021"/>

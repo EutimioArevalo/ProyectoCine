@@ -14,10 +14,10 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import Modelo.Pelicula;
+import Modelo.Sala;
+import Modelo.Ticket;
 import java.util.ArrayList;
 import java.util.List;
-import Modelo.Ticket;
-import Modelo.Sala;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -42,63 +42,45 @@ public class CarteleraJpaController implements Serializable {
     }
 
     public void create(Cartelera cartelera) {
-        if (cartelera.getPeliculaList() == null) {
-            cartelera.setPeliculaList(new ArrayList<Pelicula>());
-        }
         if (cartelera.getTicketList() == null) {
             cartelera.setTicketList(new ArrayList<Ticket>());
-        }
-        if (cartelera.getSalaList() == null) {
-            cartelera.setSalaList(new ArrayList<Sala>());
         }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            List<Pelicula> attachedPeliculaList = new ArrayList<Pelicula>();
-            for (Pelicula peliculaListPeliculaToAttach : cartelera.getPeliculaList()) {
-                peliculaListPeliculaToAttach = em.getReference(peliculaListPeliculaToAttach.getClass(), peliculaListPeliculaToAttach.getIdPelicula());
-                attachedPeliculaList.add(peliculaListPeliculaToAttach);
+            Pelicula idPelicula = cartelera.getIdPelicula();
+            if (idPelicula != null) {
+                idPelicula = em.getReference(idPelicula.getClass(), idPelicula.getIdPelicula());
+                cartelera.setIdPelicula(idPelicula);
             }
-            cartelera.setPeliculaList(attachedPeliculaList);
+            Sala idSala = cartelera.getIdSala();
+            if (idSala != null) {
+                idSala = em.getReference(idSala.getClass(), idSala.getIdSala());
+                cartelera.setIdSala(idSala);
+            }
             List<Ticket> attachedTicketList = new ArrayList<Ticket>();
             for (Ticket ticketListTicketToAttach : cartelera.getTicketList()) {
                 ticketListTicketToAttach = em.getReference(ticketListTicketToAttach.getClass(), ticketListTicketToAttach.getIdTicket());
                 attachedTicketList.add(ticketListTicketToAttach);
             }
             cartelera.setTicketList(attachedTicketList);
-            List<Sala> attachedSalaList = new ArrayList<Sala>();
-            for (Sala salaListSalaToAttach : cartelera.getSalaList()) {
-                salaListSalaToAttach = em.getReference(salaListSalaToAttach.getClass(), salaListSalaToAttach.getIdSala());
-                attachedSalaList.add(salaListSalaToAttach);
-            }
-            cartelera.setSalaList(attachedSalaList);
             em.persist(cartelera);
-            for (Pelicula peliculaListPelicula : cartelera.getPeliculaList()) {
-                Cartelera oldIdCarteleraOfPeliculaListPelicula = peliculaListPelicula.getIdCartelera();
-                peliculaListPelicula.setIdCartelera(cartelera);
-                peliculaListPelicula = em.merge(peliculaListPelicula);
-                if (oldIdCarteleraOfPeliculaListPelicula != null) {
-                    oldIdCarteleraOfPeliculaListPelicula.getPeliculaList().remove(peliculaListPelicula);
-                    oldIdCarteleraOfPeliculaListPelicula = em.merge(oldIdCarteleraOfPeliculaListPelicula);
-                }
+            if (idPelicula != null) {
+                idPelicula.getCarteleraList().add(cartelera);
+                idPelicula = em.merge(idPelicula);
+            }
+            if (idSala != null) {
+                idSala.getCarteleraList().add(cartelera);
+                idSala = em.merge(idSala);
             }
             for (Ticket ticketListTicket : cartelera.getTicketList()) {
-                Cartelera oldIdcarteleraOfTicketListTicket = ticketListTicket.getIdcartelera();
-                ticketListTicket.setIdcartelera(cartelera);
+                Cartelera oldIdCarteleraOfTicketListTicket = ticketListTicket.getIdCartelera();
+                ticketListTicket.setIdCartelera(cartelera);
                 ticketListTicket = em.merge(ticketListTicket);
-                if (oldIdcarteleraOfTicketListTicket != null) {
-                    oldIdcarteleraOfTicketListTicket.getTicketList().remove(ticketListTicket);
-                    oldIdcarteleraOfTicketListTicket = em.merge(oldIdcarteleraOfTicketListTicket);
-                }
-            }
-            for (Sala salaListSala : cartelera.getSalaList()) {
-                Cartelera oldIdCarteleraOfSalaListSala = salaListSala.getIdCartelera();
-                salaListSala.setIdCartelera(cartelera);
-                salaListSala = em.merge(salaListSala);
-                if (oldIdCarteleraOfSalaListSala != null) {
-                    oldIdCarteleraOfSalaListSala.getSalaList().remove(salaListSala);
-                    oldIdCarteleraOfSalaListSala = em.merge(oldIdCarteleraOfSalaListSala);
+                if (oldIdCarteleraOfTicketListTicket != null) {
+                    oldIdCarteleraOfTicketListTicket.getTicketList().remove(ticketListTicket);
+                    oldIdCarteleraOfTicketListTicket = em.merge(oldIdCarteleraOfTicketListTicket);
                 }
             }
             em.getTransaction().commit();
@@ -115,47 +97,32 @@ public class CarteleraJpaController implements Serializable {
             em = getEntityManager();
             em.getTransaction().begin();
             Cartelera persistentCartelera = em.find(Cartelera.class, cartelera.getIdCartelera());
-            List<Pelicula> peliculaListOld = persistentCartelera.getPeliculaList();
-            List<Pelicula> peliculaListNew = cartelera.getPeliculaList();
+            Pelicula idPeliculaOld = persistentCartelera.getIdPelicula();
+            Pelicula idPeliculaNew = cartelera.getIdPelicula();
+            Sala idSalaOld = persistentCartelera.getIdSala();
+            Sala idSalaNew = cartelera.getIdSala();
             List<Ticket> ticketListOld = persistentCartelera.getTicketList();
             List<Ticket> ticketListNew = cartelera.getTicketList();
-            List<Sala> salaListOld = persistentCartelera.getSalaList();
-            List<Sala> salaListNew = cartelera.getSalaList();
             List<String> illegalOrphanMessages = null;
-            for (Pelicula peliculaListOldPelicula : peliculaListOld) {
-                if (!peliculaListNew.contains(peliculaListOldPelicula)) {
-                    if (illegalOrphanMessages == null) {
-                        illegalOrphanMessages = new ArrayList<String>();
-                    }
-                    illegalOrphanMessages.add("You must retain Pelicula " + peliculaListOldPelicula + " since its idCartelera field is not nullable.");
-                }
-            }
             for (Ticket ticketListOldTicket : ticketListOld) {
                 if (!ticketListNew.contains(ticketListOldTicket)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Ticket " + ticketListOldTicket + " since its idcartelera field is not nullable.");
-                }
-            }
-            for (Sala salaListOldSala : salaListOld) {
-                if (!salaListNew.contains(salaListOldSala)) {
-                    if (illegalOrphanMessages == null) {
-                        illegalOrphanMessages = new ArrayList<String>();
-                    }
-                    illegalOrphanMessages.add("You must retain Sala " + salaListOldSala + " since its idCartelera field is not nullable.");
+                    illegalOrphanMessages.add("You must retain Ticket " + ticketListOldTicket + " since its idCartelera field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
-            List<Pelicula> attachedPeliculaListNew = new ArrayList<Pelicula>();
-            for (Pelicula peliculaListNewPeliculaToAttach : peliculaListNew) {
-                peliculaListNewPeliculaToAttach = em.getReference(peliculaListNewPeliculaToAttach.getClass(), peliculaListNewPeliculaToAttach.getIdPelicula());
-                attachedPeliculaListNew.add(peliculaListNewPeliculaToAttach);
+            if (idPeliculaNew != null) {
+                idPeliculaNew = em.getReference(idPeliculaNew.getClass(), idPeliculaNew.getIdPelicula());
+                cartelera.setIdPelicula(idPeliculaNew);
             }
-            peliculaListNew = attachedPeliculaListNew;
-            cartelera.setPeliculaList(peliculaListNew);
+            if (idSalaNew != null) {
+                idSalaNew = em.getReference(idSalaNew.getClass(), idSalaNew.getIdSala());
+                cartelera.setIdSala(idSalaNew);
+            }
             List<Ticket> attachedTicketListNew = new ArrayList<Ticket>();
             for (Ticket ticketListNewTicketToAttach : ticketListNew) {
                 ticketListNewTicketToAttach = em.getReference(ticketListNewTicketToAttach.getClass(), ticketListNewTicketToAttach.getIdTicket());
@@ -163,44 +130,31 @@ public class CarteleraJpaController implements Serializable {
             }
             ticketListNew = attachedTicketListNew;
             cartelera.setTicketList(ticketListNew);
-            List<Sala> attachedSalaListNew = new ArrayList<Sala>();
-            for (Sala salaListNewSalaToAttach : salaListNew) {
-                salaListNewSalaToAttach = em.getReference(salaListNewSalaToAttach.getClass(), salaListNewSalaToAttach.getIdSala());
-                attachedSalaListNew.add(salaListNewSalaToAttach);
-            }
-            salaListNew = attachedSalaListNew;
-            cartelera.setSalaList(salaListNew);
             cartelera = em.merge(cartelera);
-            for (Pelicula peliculaListNewPelicula : peliculaListNew) {
-                if (!peliculaListOld.contains(peliculaListNewPelicula)) {
-                    Cartelera oldIdCarteleraOfPeliculaListNewPelicula = peliculaListNewPelicula.getIdCartelera();
-                    peliculaListNewPelicula.setIdCartelera(cartelera);
-                    peliculaListNewPelicula = em.merge(peliculaListNewPelicula);
-                    if (oldIdCarteleraOfPeliculaListNewPelicula != null && !oldIdCarteleraOfPeliculaListNewPelicula.equals(cartelera)) {
-                        oldIdCarteleraOfPeliculaListNewPelicula.getPeliculaList().remove(peliculaListNewPelicula);
-                        oldIdCarteleraOfPeliculaListNewPelicula = em.merge(oldIdCarteleraOfPeliculaListNewPelicula);
-                    }
-                }
+            if (idPeliculaOld != null && !idPeliculaOld.equals(idPeliculaNew)) {
+                idPeliculaOld.getCarteleraList().remove(cartelera);
+                idPeliculaOld = em.merge(idPeliculaOld);
+            }
+            if (idPeliculaNew != null && !idPeliculaNew.equals(idPeliculaOld)) {
+                idPeliculaNew.getCarteleraList().add(cartelera);
+                idPeliculaNew = em.merge(idPeliculaNew);
+            }
+            if (idSalaOld != null && !idSalaOld.equals(idSalaNew)) {
+                idSalaOld.getCarteleraList().remove(cartelera);
+                idSalaOld = em.merge(idSalaOld);
+            }
+            if (idSalaNew != null && !idSalaNew.equals(idSalaOld)) {
+                idSalaNew.getCarteleraList().add(cartelera);
+                idSalaNew = em.merge(idSalaNew);
             }
             for (Ticket ticketListNewTicket : ticketListNew) {
                 if (!ticketListOld.contains(ticketListNewTicket)) {
-                    Cartelera oldIdcarteleraOfTicketListNewTicket = ticketListNewTicket.getIdcartelera();
-                    ticketListNewTicket.setIdcartelera(cartelera);
+                    Cartelera oldIdCarteleraOfTicketListNewTicket = ticketListNewTicket.getIdCartelera();
+                    ticketListNewTicket.setIdCartelera(cartelera);
                     ticketListNewTicket = em.merge(ticketListNewTicket);
-                    if (oldIdcarteleraOfTicketListNewTicket != null && !oldIdcarteleraOfTicketListNewTicket.equals(cartelera)) {
-                        oldIdcarteleraOfTicketListNewTicket.getTicketList().remove(ticketListNewTicket);
-                        oldIdcarteleraOfTicketListNewTicket = em.merge(oldIdcarteleraOfTicketListNewTicket);
-                    }
-                }
-            }
-            for (Sala salaListNewSala : salaListNew) {
-                if (!salaListOld.contains(salaListNewSala)) {
-                    Cartelera oldIdCarteleraOfSalaListNewSala = salaListNewSala.getIdCartelera();
-                    salaListNewSala.setIdCartelera(cartelera);
-                    salaListNewSala = em.merge(salaListNewSala);
-                    if (oldIdCarteleraOfSalaListNewSala != null && !oldIdCarteleraOfSalaListNewSala.equals(cartelera)) {
-                        oldIdCarteleraOfSalaListNewSala.getSalaList().remove(salaListNewSala);
-                        oldIdCarteleraOfSalaListNewSala = em.merge(oldIdCarteleraOfSalaListNewSala);
+                    if (oldIdCarteleraOfTicketListNewTicket != null && !oldIdCarteleraOfTicketListNewTicket.equals(cartelera)) {
+                        oldIdCarteleraOfTicketListNewTicket.getTicketList().remove(ticketListNewTicket);
+                        oldIdCarteleraOfTicketListNewTicket = em.merge(oldIdCarteleraOfTicketListNewTicket);
                     }
                 }
             }
@@ -234,29 +188,25 @@ public class CarteleraJpaController implements Serializable {
                 throw new NonexistentEntityException("The cartelera with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
-            List<Pelicula> peliculaListOrphanCheck = cartelera.getPeliculaList();
-            for (Pelicula peliculaListOrphanCheckPelicula : peliculaListOrphanCheck) {
-                if (illegalOrphanMessages == null) {
-                    illegalOrphanMessages = new ArrayList<String>();
-                }
-                illegalOrphanMessages.add("This Cartelera (" + cartelera + ") cannot be destroyed since the Pelicula " + peliculaListOrphanCheckPelicula + " in its peliculaList field has a non-nullable idCartelera field.");
-            }
             List<Ticket> ticketListOrphanCheck = cartelera.getTicketList();
             for (Ticket ticketListOrphanCheckTicket : ticketListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Cartelera (" + cartelera + ") cannot be destroyed since the Ticket " + ticketListOrphanCheckTicket + " in its ticketList field has a non-nullable idcartelera field.");
-            }
-            List<Sala> salaListOrphanCheck = cartelera.getSalaList();
-            for (Sala salaListOrphanCheckSala : salaListOrphanCheck) {
-                if (illegalOrphanMessages == null) {
-                    illegalOrphanMessages = new ArrayList<String>();
-                }
-                illegalOrphanMessages.add("This Cartelera (" + cartelera + ") cannot be destroyed since the Sala " + salaListOrphanCheckSala + " in its salaList field has a non-nullable idCartelera field.");
+                illegalOrphanMessages.add("This Cartelera (" + cartelera + ") cannot be destroyed since the Ticket " + ticketListOrphanCheckTicket + " in its ticketList field has a non-nullable idCartelera field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
+            }
+            Pelicula idPelicula = cartelera.getIdPelicula();
+            if (idPelicula != null) {
+                idPelicula.getCarteleraList().remove(cartelera);
+                idPelicula = em.merge(idPelicula);
+            }
+            Sala idSala = cartelera.getIdSala();
+            if (idSala != null) {
+                idSala.getCarteleraList().remove(cartelera);
+                idSala = em.merge(idSala);
             }
             em.remove(cartelera);
             em.getTransaction().commit();

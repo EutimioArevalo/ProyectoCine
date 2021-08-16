@@ -6,18 +6,19 @@
 package Modelo;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
@@ -25,7 +26,6 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "pelicula")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Pelicula.findAll", query = "SELECT p FROM Pelicula p"),
     @NamedQuery(name = "Pelicula.findByIdPelicula", query = "SELECT p FROM Pelicula p WHERE p.idPelicula = :idPelicula"),
@@ -38,60 +38,59 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Pelicula.findByGenero", query = "SELECT p FROM Pelicula p WHERE p.genero = :genero"),
     @NamedQuery(name = "Pelicula.findByIdioma", query = "SELECT p FROM Pelicula p WHERE p.idioma = :idioma"),
     @NamedQuery(name = "Pelicula.findByDirector", query = "SELECT p FROM Pelicula p WHERE p.director = :director"),
-    @NamedQuery(name = "Pelicula.findByActorPrincipal", query = "SELECT p FROM Pelicula p WHERE p.actorPrincipal = :actorPrincipal"),
+    @NamedQuery(name = "Pelicula.findByElenco", query = "SELECT p FROM Pelicula p WHERE p.elenco = :elenco"),
     @NamedQuery(name = "Pelicula.findByClasificacion", query = "SELECT p FROM Pelicula p WHERE p.clasificacion = :clasificacion"),
     @NamedQuery(name = "Pelicula.findByResolucion", query = "SELECT p FROM Pelicula p WHERE p.resolucion = :resolucion"),
-    @NamedQuery(name = "Pelicula.findByFomato", query = "SELECT p FROM Pelicula p WHERE p.fomato = :fomato")})
+    @NamedQuery(name = "Pelicula.findByFormato", query = "SELECT p FROM Pelicula p WHERE p.formato = :formato")})
 public class Pelicula implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_pelicula")
+    @Column(name = "idPelicula", nullable = false)
     private Integer idPelicula;
     @Basic(optional = false)
-    @Column(name = "titulo")
+    @Column(name = "titulo", nullable = false, length = 100)
     private String titulo;
     @Basic(optional = false)
-    @Column(name = "sipnosis")
+    @Column(name = "sipnosis", nullable = false, length = 2000)
     private String sipnosis;
     @Basic(optional = false)
-    @Column(name = "trailer")
+    @Column(name = "trailer", nullable = false, length = 200)
     private String trailer;
     @Basic(optional = false)
-    @Column(name = "portada")
+    @Column(name = "portada", nullable = false, length = 500)
     private String portada;
     @Basic(optional = false)
-    @Column(name = "fechaEstreno")
+    @Column(name = "fechaEstreno", nullable = false, length = 10)
     private String fechaEstreno;
     @Basic(optional = false)
-    @Column(name = "duracion")
+    @Column(name = "duracion", nullable = false, length = 10)
     private String duracion;
     @Basic(optional = false)
-    @Column(name = "genero")
+    @Column(name = "genero", nullable = false, length = 100)
     private String genero;
     @Basic(optional = false)
-    @Column(name = "idioma")
+    @Column(name = "idioma", nullable = false, length = 45)
     private String idioma;
     @Basic(optional = false)
-    @Column(name = "director")
+    @Column(name = "director", nullable = false, length = 100)
     private String director;
     @Basic(optional = false)
-    @Column(name = "actorPrincipal")
-    private String actorPrincipal;
+    @Column(name = "elenco", nullable = false, length = 1000)
+    private String elenco;
     @Basic(optional = false)
-    @Column(name = "clasificacion")
+    @Column(name = "clasificacion", nullable = false, length = 5)
     private String clasificacion;
     @Basic(optional = false)
-    @Column(name = "resolucion")
+    @Column(name = "resolucion", nullable = false, length = 10)
     private String resolucion;
     @Basic(optional = false)
-    @Column(name = "fomato")
-    private String fomato;
-    @JoinColumn(name = "id_cartelera", referencedColumnName = "id_cartelera")
-    @ManyToOne
-    private Cartelera idCartelera;
+    @Column(name = "formato", nullable = false, length = 10)
+    private String formato;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPelicula", fetch = FetchType.LAZY)
+    private List<Cartelera> carteleraList;
 
     public Pelicula() {
     }
@@ -100,7 +99,7 @@ public class Pelicula implements Serializable {
         this.idPelicula = idPelicula;
     }
 
-    public Pelicula(Integer idPelicula, String titulo, String sipnosis, String trailer, String portada, String fechaEstreno, String duracion, String genero, String idioma, String director, String actorPrincipal, String clasificacion, String resolucion, String fomato) {
+    public Pelicula(Integer idPelicula, String titulo, String sipnosis, String trailer, String portada, String fechaEstreno, String duracion, String genero, String idioma, String director, String elenco, String clasificacion, String resolucion, String formato) {
         this.idPelicula = idPelicula;
         this.titulo = titulo;
         this.sipnosis = sipnosis;
@@ -111,10 +110,10 @@ public class Pelicula implements Serializable {
         this.genero = genero;
         this.idioma = idioma;
         this.director = director;
-        this.actorPrincipal = actorPrincipal;
+        this.elenco = elenco;
         this.clasificacion = clasificacion;
         this.resolucion = resolucion;
-        this.fomato = fomato;
+        this.formato = formato;
     }
 
     public Integer getIdPelicula() {
@@ -197,12 +196,12 @@ public class Pelicula implements Serializable {
         this.director = director;
     }
 
-    public String getActorPrincipal() {
-        return actorPrincipal;
+    public String getElenco() {
+        return elenco;
     }
 
-    public void setActorPrincipal(String actorPrincipal) {
-        this.actorPrincipal = actorPrincipal;
+    public void setElenco(String elenco) {
+        this.elenco = elenco;
     }
 
     public String getClasificacion() {
@@ -221,20 +220,20 @@ public class Pelicula implements Serializable {
         this.resolucion = resolucion;
     }
 
-    public String getFomato() {
-        return fomato;
+    public String getFormato() {
+        return formato;
     }
 
-    public void setFomato(String fomato) {
-        this.fomato = fomato;
+    public void setFormato(String formato) {
+        this.formato = formato;
     }
 
-    public Cartelera getIdCartelera() {
-        return idCartelera;
+    public List<Cartelera> getCarteleraList() {
+        return carteleraList;
     }
 
-    public void setIdCartelera(Cartelera idCartelera) {
-        this.idCartelera = idCartelera;
+    public void setCarteleraList(List<Cartelera> carteleraList) {
+        this.carteleraList = carteleraList;
     }
 
     @Override

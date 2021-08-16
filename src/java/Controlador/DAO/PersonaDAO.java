@@ -5,25 +5,31 @@
  */
 package Controlador.DAO;
 
-import Controlador.JPA.FacturaJpaController;
 import Controlador.JPA.PersonaJpaController;
-import Modelo.Factura;
 import Modelo.Persona;
 import Modelo.Rol;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  *
- * @author timoa
+ * @author Jonathan Andrade, Eutimio Arévalo
  */
 public class PersonaDAO {
 
     private Persona persona = new Persona();
-    private FacturaJpaController fjc = new FacturaJpaController();
     private PersonaJpaController pjc = new PersonaJpaController();
 
-    public void crear(String nombres, String apellidos, String cedula, String email, String telefono, Rol rol) {
+    /**
+     * Metodo para insertar una Persona en la Base de Datos.
+     *
+     * @param nombres Nombres de la Persona
+     * @param apellidos Apellidos de la Persona
+     * @param cedula Cedula de la Persona
+     * @param email Email de la Persona
+     * @param telefono Telefono de la Persona
+     * @param idrol Rol de la persona
+     */
+    public void crear(String nombres, String apellidos, String cedula, String email, String telefono, Rol idrol) {
         try {
             persona.setIdPersona(Integer.BYTES);
             persona.setNombres(nombres);
@@ -31,24 +37,46 @@ public class PersonaDAO {
             persona.setCedula(cedula);
             persona.setEmail(email);
             persona.setTelefono(telefono);
-            persona.setIdRol(rol);
+            persona.setIdRol(idrol);
             pjc.create(persona);
         } catch (Exception e) {
             e.getMessage();
         }
     }
-    
-    
 
-    public List<Factura> listFactura(int id) {
-        List<Factura> list;
-        if (id == 0) {
-            list = new ArrayList<>();
-            return list;
+    /**
+     * Metodo para editar una persona
+     *
+     * @param id Identificador de la persona a Editar
+     * @param nombres Nuevos nombres
+     * @param apellidos Nuevos apellidos
+     * @param cedula nueva cedula
+     * @param email nuevo email
+     * @param telefono nuevo telefono
+     * @param idrol nuevo rol
+     */
+    public void editarPersona(int id, String nombres, String apellidos, String cedula, String email, String telefono, Rol idrol) {
+        try {
+            Persona aux  = pjc.findPersona(id);
+            aux.setIdPersona(id);
+            aux.setNombres(nombres);
+            aux.setApellidos(apellidos);
+            aux.setCedula(cedula);
+            aux.setEmail(email);
+            aux.setTelefono(telefono);
+            aux.setIdRol(idrol);
+            pjc.edit(aux);
+        } catch (Exception e) {
+            e.getMessage();
         }
-        return null;
     }
 
+    /**
+     * Metodo para buscar una persona por su cedula
+     *
+     * @param cedula Cedula de la persona
+     * @return Persona con la cedula ingresada
+     */
     public Persona buscarCedula(String cedula) {
         List<Persona> list = pjc.findPersonaEntities();
         Persona per = null;
@@ -60,7 +88,13 @@ public class PersonaDAO {
         }
         return per;
     }
-    
+
+    /**
+     * Metodo para buscar una persona por su Identificador
+     *
+     * @param id Identificador de la persona
+     * @return Persona con el identificador ingresado
+     */
     public Persona buscarPorId(int id) {
         List<Persona> list = pjc.findPersonaEntities();
         Persona per = null;
@@ -72,6 +106,17 @@ public class PersonaDAO {
         }
         return per;
     }
-    
+
+    public Persona buscar(String cedula) {
+        List<Persona> list = pjc.findPersonaEntities();
+        Persona per = null;
+        for (Persona p : list) {
+            if (cedula.equals(p.getCedula())) {
+                per = p;
+                break;
+            }
+        }
+        return per;
+    }
 
 }

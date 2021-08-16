@@ -5,14 +5,16 @@
  */
 package Controlador.JPA;
 
+import Controlador.JPA.exceptions.IllegalOrphanException;
 import Controlador.JPA.exceptions.NonexistentEntityException;
 import java.io.Serializable;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import Modelo.Detallefactura;
+import Modelo.Carrito;
 import Modelo.Snack;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -38,19 +40,28 @@ public class SnackJpaController implements Serializable {
     }
 
     public void create(Snack snack) {
+        if (snack.getCarritoList() == null) {
+            snack.setCarritoList(new ArrayList<Carrito>());
+        }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Detallefactura idDetalleFactura = snack.getIdDetalleFactura();
-            if (idDetalleFactura != null) {
-                idDetalleFactura = em.getReference(idDetalleFactura.getClass(), idDetalleFactura.getIdDetalleFactura());
-                snack.setIdDetalleFactura(idDetalleFactura);
+            List<Carrito> attachedCarritoList = new ArrayList<Carrito>();
+            for (Carrito carritoListCarritoToAttach : snack.getCarritoList()) {
+                carritoListCarritoToAttach = em.getReference(carritoListCarritoToAttach.getClass(), carritoListCarritoToAttach.getIdcarrito());
+                attachedCarritoList.add(carritoListCarritoToAttach);
             }
+            snack.setCarritoList(attachedCarritoList);
             em.persist(snack);
-            if (idDetalleFactura != null) {
-                idDetalleFactura.getSnackList().add(snack);
-                idDetalleFactura = em.merge(idDetalleFactura);
+            for (Carrito carritoListCarrito : snack.getCarritoList()) {
+                Snack oldSnackOfCarritoListCarrito = carritoListCarrito.getSnack();
+                carritoListCarrito.setSnack(snack);
+                carritoListCarrito = em.merge(carritoListCarrito);
+                if (oldSnackOfCarritoListCarrito != null) {
+                    oldSnackOfCarritoListCarrito.getCarritoList().remove(carritoListCarrito);
+                    oldSnackOfCarritoListCarrito = em.merge(oldSnackOfCarritoListCarrito);
+                }
             }
             em.getTransaction().commit();
         } finally {
@@ -60,26 +71,44 @@ public class SnackJpaController implements Serializable {
         }
     }
 
-    public void edit(Snack snack) throws NonexistentEntityException, Exception {
+    public void edit(Snack snack) throws IllegalOrphanException, NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
             Snack persistentSnack = em.find(Snack.class, snack.getIdSnack());
-            Detallefactura idDetalleFacturaOld = persistentSnack.getIdDetalleFactura();
-            Detallefactura idDetalleFacturaNew = snack.getIdDetalleFactura();
-            if (idDetalleFacturaNew != null) {
-                idDetalleFacturaNew = em.getReference(idDetalleFacturaNew.getClass(), idDetalleFacturaNew.getIdDetalleFactura());
-                snack.setIdDetalleFactura(idDetalleFacturaNew);
+            List<Carrito> carritoListOld = persistentSnack.getCarritoList();
+            List<Carrito> carritoListNew = snack.getCarritoList();
+            List<String> illegalOrphanMessages = null;
+            for (Carrito carritoListOldCarrito : carritoListOld) {
+                if (!carritoListNew.contains(carritoListOldCarrito)) {
+                    if (illegalOrphanMessages == null) {
+                        illegalOrphanMessages = new ArrayList<String>();
+                    }
+                    illegalOrphanMessages.add("You must retain Carrito " + carritoListOldCarrito + " since its snack field is not nullable.");
+                }
             }
+            if (illegalOrphanMessages != null) {
+                throw new IllegalOrphanException(illegalOrphanMessages);
+            }
+            List<Carrito> attachedCarritoListNew = new ArrayList<Carrito>();
+            for (Carrito carritoListNewCarritoToAttach : carritoListNew) {
+                carritoListNewCarritoToAttach = em.getReference(carritoListNewCarritoToAttach.getClass(), carritoListNewCarritoToAttach.getIdcarrito());
+                attachedCarritoListNew.add(carritoListNewCarritoToAttach);
+            }
+            carritoListNew = attachedCarritoListNew;
+            snack.setCarritoList(carritoListNew);
             snack = em.merge(snack);
-            if (idDetalleFacturaOld != null && !idDetalleFacturaOld.equals(idDetalleFacturaNew)) {
-                idDetalleFacturaOld.getSnackList().remove(snack);
-                idDetalleFacturaOld = em.merge(idDetalleFacturaOld);
-            }
-            if (idDetalleFacturaNew != null && !idDetalleFacturaNew.equals(idDetalleFacturaOld)) {
-                idDetalleFacturaNew.getSnackList().add(snack);
-                idDetalleFacturaNew = em.merge(idDetalleFacturaNew);
+            for (Carrito carritoListNewCarrito : carritoListNew) {
+                if (!carritoListOld.contains(carritoListNewCarrito)) {
+                    Snack oldSnackOfCarritoListNewCarrito = carritoListNewCarrito.getSnack();
+                    carritoListNewCarrito.setSnack(snack);
+                    carritoListNewCarrito = em.merge(carritoListNewCarrito);
+                    if (oldSnackOfCarritoListNewCarrito != null && !oldSnackOfCarritoListNewCarrito.equals(snack)) {
+                        oldSnackOfCarritoListNewCarrito.getCarritoList().remove(carritoListNewCarrito);
+                        oldSnackOfCarritoListNewCarrito = em.merge(oldSnackOfCarritoListNewCarrito);
+                    }
+                }
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
@@ -98,7 +127,7 @@ public class SnackJpaController implements Serializable {
         }
     }
 
-    public void destroy(Integer id) throws NonexistentEntityException {
+    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -110,10 +139,16 @@ public class SnackJpaController implements Serializable {
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The snack with id " + id + " no longer exists.", enfe);
             }
-            Detallefactura idDetalleFactura = snack.getIdDetalleFactura();
-            if (idDetalleFactura != null) {
-                idDetalleFactura.getSnackList().remove(snack);
-                idDetalleFactura = em.merge(idDetalleFactura);
+            List<String> illegalOrphanMessages = null;
+            List<Carrito> carritoListOrphanCheck = snack.getCarritoList();
+            for (Carrito carritoListOrphanCheckCarrito : carritoListOrphanCheck) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("This Snack (" + snack + ") cannot be destroyed since the Carrito " + carritoListOrphanCheckCarrito + " in its carritoList field has a non-nullable snack field.");
+            }
+            if (illegalOrphanMessages != null) {
+                throw new IllegalOrphanException(illegalOrphanMessages);
             }
             em.remove(snack);
             em.getTransaction().commit();
