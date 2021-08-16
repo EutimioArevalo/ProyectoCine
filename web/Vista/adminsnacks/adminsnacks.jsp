@@ -4,6 +4,10 @@
     Author     : timoa
 --%>
 
+<%@page import="Modelo.Detallefactura"%>
+<%@page import="Modelo.Factura"%>
+<%@page import="Controlador.Jpa.SnackJpaController"%>
+<%@page import="Controlador.Dao.SnackDAO"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -14,6 +18,11 @@
         <title>Vista_cine</title>
         <link rel="stylesheet" href="styles.css">
     </head>
+    <%
+    SnackDAO snack = new SnackDAO(); 
+    SnackJpaController snackctrl= new SnackJpaController(); 
+    Detallefactura detallefactura = new Detallefactura(); 
+    %>
     <body>
         <!--FONT OSWALD-->
         <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -64,58 +73,58 @@
                                 <!--se definen el numero de columnas-->
                                 <th></th>
                                 <th> <strong>Numero</strong> </th>
+                                <th> Nombre</th>
                                 <th>Descripción</th>
                                 <th>Precio</th>
                             </tr>
                         <tbody>
                             <!--se definen el numero de filas-->
-                            <tr>
-                                <td> <input type="checkbox" name="" id="" ></td>
+                        <form>
+   
+                            <%
+                            // el numero de los combos se extrae de la base de datos 
+                            for (int i = 0; i < snackctrl.findSnackEntities().size(); i++) {
+                            %>
+                             <tr>
+                                <td> <input type="checkbox" name="listacombo" id="" ></td>
 
-                                <td>1</td>
-                                <td>Hot dogs, palomitas, chocolate Galak</td>
-                                <td>1.25</td>
-                            </tr>
-                            <tr>
-                                <td> <input type="checkbox" name="" id="" ></td>
-
-                                <td>2</td>
+                                <td><input type="number" name="nrosnack" value="<%=i+1%>" ></td>
+                                 <!-- Nombre -->
+                                <td>Combo <%=i+1%></td>
+                                <!-- descripcion -->
                                 <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td> <input type="checkbox" name="" id="" ></td>
-
-                                <td>3</td>
-                                <td></td>
+                                <!-- precio -->
                                 <td></td>
                             </tr>
-                            <tr>
-                                <td> <input type="checkbox" name="" id="" ></td>
-
-                                <td>4</td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-
-
-
-
+                            <%
+                                }
+                            %>
+                            </form>
 
                         </tbody>
                         </thead>
                     </table>
 
                 </div>
-                <p2>Información:</p2>
-                <input class= "controls" type="text" name="nombres" id="nombres" placeholder="Ingrese información">
-                <p2>Precio:</p2>
-                <input class= "controls" type="number" name="nombres" id="nombres" placeholder="Ingrese su precio">
-                <input class= "buttons" type="submit" value="Agregar">
-                <input class= "buttons" type="submit" value="Modificar">
-                <input class= "buttons" type="submit" value="Dar de baja">
-                <h5></h5>
-                <input class= "button" type="submit" value="Aceptar">
+
+                <form>
+                    <p2>Información:</p2>
+                    <input class= "controls" type="text" name="info" id="nombresinfo" placeholder="Ingrese información">
+                    <p2>Precio:</p2>
+                    <input class= "controls"  type="number" name="precio" id="nombres" placeholder="Ingrese su precio">
+                    <p2>Nombre:</p2>
+                    <input class= "controls" type="text" name="nombre"  placeholder="Ingrese nombre">
+                    <!-- btn -->
+                    <input class= "buttons" name="btns" type="submit" value="Agregar">
+                    <input class= "buttons" name="btns" type="submit" value="Modificar">
+                    <input class= "buttons" name="btns" type="submit" value="Dar de baja">
+
+                </form>
+
+                <<form>
+                    <input class= "button" name="btns" type="submit" value="Aceptar">
+                </form>
+
             </section>
             <nav class="nav-main">
 
@@ -123,6 +132,25 @@
             </nav>
         </div>
 
+    <%
+        // se necesitan  id, nombre , descripcion, precio, idfactura 
+        // el nombre es el combo + su numero
+        String nombre= request.getParameter("nombre");
+        String descripcion= request.getParameter("info");
+        float precio = Float.parseFloat(request.getParameter("precio")); 
+        String accion = request.getParameter("btns"); 
+        int nrosnack = Integer.parseInt(request.getParameter("nrosnack")); 
+        // revisar el ID de detallefactura 
+        if (accion.equals("Agregar")) {
+                snack.ingresar(nombre, descripcion, precio, detallefactura);
+            } else if(accion.equals("Modificar")){
+                snack.modificar(nombre, descripcion, precio, detallefactura); 
+            }else if (accion.equals("Dar de baja")){
+                snack.darbaja(nrosnack); 
+            }else if (accion.equals("Aceptar")){
+            // regresa a la vista anterior
+            }; 
 
+    %>
     </body>
 </html>
