@@ -4,7 +4,7 @@
     padding: 0;
 }
 
-/* MODIFICACIÓN CUERPO */
+/* MODIFICACIÃ“N CUERPO */
 
 body{
     background-color: #000000;
@@ -36,14 +36,59 @@ ul{
     height: 60px;
     padding: 20px 0;
 }
+.divform{
+    padding-bottom: 60px;
+}
 
-/* MODIFICACIÓN TOP MENU */
-
-
-input{
-    width: 100%;
+.botonConfir{
+    width: 200px; 
     padding: 5px 20px;
+    border-radius: 10px;
+    margin-left: 180px;
+    color: white;
+    background: #262626;
+    font-family: 'Oswald', sans-serif;
+}
+
+.botonDarDeBaja{ 
+    padding: 5px 20px;
+    border-radius: 10px;
     box-sizing: border-box;
+    color: white;   
+    background: darkred;
+    font-family: 'Oswald', sans-serif;
+}
+
+.botonEditarInfor{ 
+    padding: 5px 20px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    color: white;   
+    background: darkgreen;
+    font-family: 'Oswald', sans-serif;
+}
+
+.botonEditarInfor:hover{
+    opacity: 70%;
+}
+
+.botonConfir:hover{
+    opacity: 70%;
+}
+
+.botonDarDeBaja:hover{
+    opacity: 70%;
+}
+
+.header{
+    margin: 25px;
+}
+
+.textField{
+    width: 100%;
+    margin: 0 auto;
+    padding: 5px 20px;
+    align-items: center;
     border-radius: 10px;
 }
 
@@ -80,217 +125,8 @@ hr{
     margin: 5px;
 }
 
-/* BIEVENIDA */
-
-.bievenida{
-    width: 100%;
-    height: 150px;
-    background: transparent;
-    padding: 30px;
-    margin-bottom: 5px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-div#peliculas{
-    /*background-color: #fff;*/
-    width: 100%;
-    height: 100%;
-}
-
-div#tarjeta{
-    background-color:#290a0a;
-    border: 5px solid #fff;
-    border-radius: 25px;
-    margin-top: 15px;
-    width: 100%;
-    height: 350px;
-}
-
-div#portada{
-    float: left;
-    /*background-color: blue;*/
-}
-
-div#portada img{
-    padding: 0px;
-    margin: 30px;
-    width: 190px;
-    height: 285px;
-}
-
-div#infoPeli{
-    /*background-color: brown;*/
-    float: left;
-    width: 81%;
-    height: 100%;
-    padding: 20px;
-
-}
-
-div#infoPeli h2{
-    font-size: 50px;
-    
-}
-
 div#infoPeli h2, p{
     margin-bottom: 20px;
-}
-
-div#infoPeli a{
-font-weight: bold;
-}
-
-div#infoPeli a:hover{
-    border-bottom: 2px solid white;
-}
-
-div
-/* PAGINA INFORMACIÓN PELICULAS*/
-
-/* Titulo */
-
-.titulo{
-    margin-top: 20px;
-    font-size: 40px;
-    font-style: italic;
-}
-
-/* Sipnosis */
-
-.sipnosis{
-    display: flex;
-    flex-direction: row;
-    margin-top: 10px;
-    margin-bottom: 20px;
-    text-align: justify;
-}
-
-.sipnosis li{
-    padding: 10px;
-}
-
-.sipnosis li img{
-    width: 190px;
-    height: 285px;
-    margin-left: 0px;
-}
-
-div#general{
-    /* background-color: red;*/
-    margin-top: 25px;
-    margin-bottom: 25px;
-     padding: 10px;
-     width: auto;
-     height: 350px;
- }
-
-/* Trailer */
-
-div#video{
-    /*background-color: green;*/
-    float: left;
-}
-
-
-div#boton{
-    /*background-color: azure;*/
-    margin-left: 850px;
-    margin-right: 243px;
-}
-
-/*Boton Reserva*/
-
-button{
-    margin-top: 10px;
-    background-color: black;
-    color: white;
-    border: 2px solid white;
-    border-radius: 5px;
-    font-size: 20px;
-    padding: 10px 100px;
-    
-}
-
-button:active{
-    color: gray;
-}
-
-button:hover{
-    opacity: 0.7;;
-}
-
-p{
-    text-align: justify;
-}
-
-/* Combo */
-
-.snacks{
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 60px;
-    margin: auto;
-}
-
-.snacks img{
-    width: 100%;
-    height: 400px;
-    border-radius: 10px;
-}
-
-.snacks h2{
-    font-size: 20px;
-    margin: 10px 0;
-    text-align: center;
-}
-
-.atrib ul.lista li{
-    margin: 20px;
-}
-
-.atrib ul.lista{
-   /* background-color:crimson;*/
-    width: 700px;
-    height: 100%;
-    float: left;
-    margin-left: 70px;
-    margin-top: 20px;
-}
-
-.atrib div.perfil{
-    float: right;
-    width: 450px;
-   /* background-color: aqua;*/
-    text-align: center;
-    margin-right: 70px;
-    margin-top: 20px;
-}
-
-.atrib div.perfil img{
-    width: 300x;
-    height: 300px;
-    border:2px solid #fff;
-    margin-bottom: 30px;
-    margin-top: 40px;
-}
-
-.atrib div.boton{
-    margin-top: 500px;
-   /* background-color: #fff;*/
-    text-align: center;
-}
-
-.atrib div.boton button.b1{
-    background-color:#198752;
-    margin: 40px;
-}
-
-.atrib div.boton button.b2{
-    background-color:#dd3546;
-    margin: 40px;
 }
 
 /* Tabla de Empleados*/
@@ -303,37 +139,18 @@ th, td{
     padding-inline: 100px;
     padding-block: 10px;
     text-align: center;
-    background-color:#000000;
+    background-color:dimgray;
     border: 3px solid white;
     font-size: 15px;
 }
 
 .tablaEmpleados{
     align-items: center;
+    margin-bottom: 50px;
 }
 
 div#tabla{
-    /*background-color: aqua;*/
     margin-right: 69px;
+    background: #198752;
     margin-left: 700px;
-}
-
-.botonDarDeBaja {
-    padding: 1px;
-    border: 1px solid #fff;
-    background-color:#dd3546;
-}
-
-.botonDarDeBaja:hover {
-    opacity: 0.7;
-}
-
-.botonEditar {
-    padding: 2px;
-    border: 1px solid #fff;
-    background-color:#198752;
-}
-
-.botonEditar:hover {
-    opacity: 0.7;
 }

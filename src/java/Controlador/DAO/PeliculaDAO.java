@@ -7,15 +7,13 @@ package Controlador.DAO;
 
 import Controlador.JPA.PeliculaJpaController;
 import Modelo.Pelicula;
-import java.util.Date;
 import java.util.List;
 
 /**
  *
- * @author timoa
+ * @author Jonathan Javier
  */
 public class PeliculaDAO {
-
     private Pelicula pelicula = new Pelicula();
     private PeliculaJpaController pjc = new PeliculaJpaController();
 
@@ -37,7 +35,6 @@ public class PeliculaDAO {
             pelicula.setClasificacion(clasificacion);
             pelicula.setResolucion(resolucion);
             pelicula.setFomato(fomato);
-            pelicula.setIdCartelera(null);
             pjc.create(pelicula);
 
         } catch (Exception e) {
@@ -64,7 +61,6 @@ public class PeliculaDAO {
             pelicula.setClasificacion(clasificacion);
             pelicula.setResolucion(resolucion);
             pelicula.setFomato(fomato);
-            pelicula.setIdCartelera(null);
             pjc.edit(pelicula);
 
         } catch (Exception e) {

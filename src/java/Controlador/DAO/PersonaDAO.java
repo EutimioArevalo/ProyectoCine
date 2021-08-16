@@ -5,51 +5,29 @@
  */
 package Controlador.DAO;
 
-import Controlador.JPA.FacturaJpaController;
+import Controlador.JPA.CuentaJpaController;
+import Controlador.JPA.DetallefacturaJpaController;
 import Controlador.JPA.PersonaJpaController;
-import Modelo.Factura;
+import Modelo.Cuenta;
+import Modelo.Detallefactura;
 import Modelo.Persona;
 import Modelo.Rol;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *
- * @author timoa
+ * @author Jonathan Javier
  */
-public class PersonaDAO {
+public class PersonaDAO{
 
     private Persona persona = new Persona();
-    private FacturaJpaController fjc = new FacturaJpaController();
     private PersonaJpaController pjc = new PersonaJpaController();
+    private DetallefacturaJpaController djc = new DetallefacturaJpaController();
+    private CuentaJpaController c = new CuentaJpaController();
 
-    public void crear(String nombres, String apellidos, String cedula, String email, String telefono, Rol rol) {
-        try {
-            persona.setIdPersona(Integer.BYTES);
-            persona.setNombres(nombres);
-            persona.setApellidos(apellidos);
-            persona.setCedula(cedula);
-            persona.setEmail(email);
-            persona.setTelefono(telefono);
-            persona.setIdRol(rol);
-            pjc.create(persona);
-        } catch (Exception e) {
-            e.getMessage();
-        }
-    }
-    
-    
-
-    public List<Factura> listFactura(int id) {
-        List<Factura> list;
-        if (id == 0) {
-            list = new ArrayList<>();
-            return list;
-        }
-        return null;
-    }
-
-    public Persona buscarCedula(String cedula) {
+    public Persona buscar(String cedula) {
         List<Persona> list = pjc.findPersonaEntities();
         Persona per = null;
         for (Persona p : list) {
@@ -61,17 +39,64 @@ public class PersonaDAO {
         return per;
     }
     
-    public Persona buscarPorId(int id) {
-        List<Persona> list = pjc.findPersonaEntities();
-        Persona per = null;
-        for (Persona p : list) {
-            if (id == p.getIdPersona()) {
-                per = p;
-                break;
-            }
+    public void crear(String nombres, String apellidos, String cedula, String email, String telefono, Rol rol) {
+        try {
+            persona.setIdPersona(Integer.BYTES);
+            persona.setNombres(nombres);
+            persona.setApellidos(apellidos);
+            persona.setCedula(cedula);
+            persona.setEmail(email);
+            persona.setTelefono(telefono);
+            persona.setCuentaList(new ArrayList<>());
+            persona.setDetallefacturaList(new ArrayList<>());
+            persona.setRolidRol(rol);
+            persona.setIdRol(rol.getIdRol());
+            pjc.create(persona);
+            persona = null;
+        } catch (Exception e) {
+            System.out.println("error al crear");
+            e.getMessage();
         }
-        return per;
+    }
+
+    public void editarPersona(int id, String nombres, String apellidos, String cedula, String email, String telefono, Rol rol) {
+        try {
+            persona.setIdPersona(id);
+            persona.setNombres(nombres);
+            persona.setApellidos(apellidos);
+            persona.setCedula(cedula);
+            persona.setEmail(email);
+            persona.setTelefono(telefono);
+            persona.setCuentaList(listaCuenta(id));
+            persona.setRolidRol(rol);
+            persona.setDetallefacturaList(listaFactura(id));
+            persona.setIdRol(rol.getIdRol());
+            pjc.edit(persona);
+        } catch (Exception e) {
+            System.out.println("Error al editar " + e.getMessage());
+            e.getMessage();
+        }
     }
     
-
+    public List<Detallefactura> listaFactura(Integer id){
+        List<Detallefactura> facturas = djc.findDetallefacturaEntities();
+        List<Detallefactura> lista = new ArrayList<>();
+        for (Detallefactura fac : facturas) {
+            if(Objects.equals(id, fac.getPersonaList())){
+                lista.add(fac);
+            }
+        }
+        return lista;
+    }
+    
+     public List<Cuenta> listaCuenta(Integer id){
+        List<Cuenta> cuentas = c.findCuentaEntities();
+        List<Cuenta> lista = new ArrayList<Cuenta>();
+        for (Cuenta cue : cuentas) {
+            if(Objects.equals(id, cue.getPersona().getIdPersona())){
+                lista.add(cue);
+            }
+        }
+        return lista;
+    }
 }
